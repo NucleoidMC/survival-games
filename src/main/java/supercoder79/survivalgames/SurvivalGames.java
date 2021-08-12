@@ -14,7 +14,6 @@ import net.fabricmc.api.ModInitializer;
 
 public class SurvivalGames implements ModInitializer {
 	public static final NoiseCompiler NOISE_COMPILER = NoiseCompiler.create(SurvivalGames.class.getClassLoader());
-	//TODO fix loot generation
 
 	@Override
 	public void onInitialize() {
