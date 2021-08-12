@@ -80,6 +80,7 @@ public class SurvivalGamesActive {
 			game.setRule(GameRuleType.FALL_DAMAGE, ActionResult.PASS);
 			game.setRule(GameRuleType.HUNGER, ActionResult.FAIL);
 			game.setRule(GameRuleType.UNSTABLE_TNT, ActionResult.PASS);
+			game.setRule(GameRuleType.THROW_ITEMS, ActionResult.SUCCESS);
 
 			game.listen(GameActivityEvents.CREATE, active::open);
 			game.listen(GameActivityEvents.DESTROY, active::close);
