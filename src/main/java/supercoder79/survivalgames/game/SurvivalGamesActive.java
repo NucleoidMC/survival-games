@@ -147,7 +147,7 @@ public final class SurvivalGamesActive {
     private void close(GameCloseReason gameCloseReason) {
         // this should hopefully fix players returning as survival mode to the lobby
         for (ServerPlayerEntity player : this.participants) {
-            player.interactionManager.changeGameMode(GameMode.SURVIVAL);
+            player.changeGameMode(GameMode.SURVIVAL);
         }
     }
 
@@ -210,7 +210,7 @@ public final class SurvivalGamesActive {
         if (this.world.isReceivingRedstonePower(pos)) {
             addLogic(new SpawnerLogic(this, pos));
             TargetPredicate pred = TargetPredicate.DEFAULT;
-            pred.setPredicate(p -> p instanceof ServerPlayerEntity player && this.participants.contains(player) && player.interactionManager.getGameMode() == GameMode.SURVIVAL);
+            pred.setPredicate(p -> p instanceof ServerPlayerEntity player && this.participants.contains(player) && player.interactionManager.isSurvivalLike());
 
             PlayerEntity player = this.world.getClosestPlayer(pred, pos.getX(), pos.getY(), pos.getZ());
 
@@ -257,14 +257,14 @@ public final class SurvivalGamesActive {
 
         int survival = 0;
         for (ServerPlayerEntity participant : this.participants) {
-            if (participant.interactionManager.getGameMode().isSurvivalLike()) {
+            if (participant.interactionManager.isSurvivalLike()) {
                 survival++;
             }
         }
 
         if (survival == 1) {
             for (ServerPlayerEntity participant : this.participants) {
-                if (participant.interactionManager.getGameMode().isSurvivalLike()) {
+                if (participant.interactionManager.isSurvivalLike()) {
                     players.sendMessage(Text.literal(participant.getNameForScoreboard() + " won!").formatted(Formatting.GOLD));
                     this.gameCloseTick = this.space.getTime() + (20 * 10);
                     break;
