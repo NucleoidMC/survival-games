@@ -139,7 +139,7 @@ public final class SurvivalGamesActive {
             int z = MathHelper.floor(Math.sin(theta) * spawnDistance);
 
             this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL);
-            this.spawnLogic.spawnPlayerAt(player, x, z, player.getServerWorld());
+            this.spawnLogic.spawnPlayerAt(player, x, z, player.getWorld());
 
             for (ItemStack stack : config.kit) {
                 player.getInventory().insertStack(stack.copy());
