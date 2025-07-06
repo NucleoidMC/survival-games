@@ -117,7 +117,7 @@ public final class SurvivalGamesActive {
         world.getWorldBorder().setCenter(0, 0);
         world.getWorldBorder().setSize(config.borderConfig.startSize);
         world.getWorldBorder().setDamagePerBlock(0.5);
-        startTime = world.getTime();
+        startTime = space.getTime();
 
         int index = 0;
 
@@ -162,14 +162,16 @@ public final class SurvivalGamesActive {
     }
 
     private void tick() {
+        long time = this.space.getTime();
+
         if (!this.borderShrinkStarted) {
             long totalSafeTime = config.borderConfig.safeSecs * 20L;
-            this.bar.tickSafe(totalSafeTime - (world.getTime() - startTime), totalSafeTime);
+            this.bar.tickSafe(totalSafeTime - (time - startTime), totalSafeTime);
 
-            if ((world.getTime() - startTime) > totalSafeTime) {
+            if ((time - startTime) > totalSafeTime) {
                 this.bar.setActive();
                 this.borderShrinkStarted = true;
-                this.shrinkStartTime = world.getTime();
+                this.shrinkStartTime = time;
                 this.space.getPlayers().participants().sendMessage(Text.literal("The worldborder has started shrinking!").formatted(Formatting.RED));
 
                 world.getWorldBorder().interpolateSize(config.borderConfig.startSize, config.borderConfig.endSize, 1000L * config.borderConfig.shrinkSecs);
@@ -180,7 +182,7 @@ public final class SurvivalGamesActive {
         } else {
             long totalShrinkTime = config.borderConfig.shrinkSecs * 20L;
 
-            if ((world.getTime() - shrinkStartTime) > totalShrinkTime || world.getWorldBorder().getSize() == this.config.borderConfig.endSize) {
+            if ((time - shrinkStartTime) > totalShrinkTime || world.getWorldBorder().getSize() == this.config.borderConfig.endSize) {
                 if (!this.finished) {
                     this.space.getPlayers().participants().sendMessage(Text.literal("Last one standing wins!").formatted(Formatting.BLUE));
                     world.getWorldBorder().setDamagePerBlock(2.5);
@@ -190,11 +192,9 @@ public final class SurvivalGamesActive {
                     this.finished = true;
                 }
             } else {
-                this.bar.tickActive(totalShrinkTime - (world.getTime() - shrinkStartTime), totalShrinkTime);
+                this.bar.tickActive(totalShrinkTime - (time - shrinkStartTime), totalShrinkTime);
             }
         }
-
-        long time = this.world.getTime();
 
         if (time > this.gameCloseTick) {
             this.space.close(GameCloseReason.FINISHED);
