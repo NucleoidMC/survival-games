@@ -267,17 +267,23 @@ public final class SurvivalGamesActive {
         if (survival == 1) {
             for (ServerPlayerEntity participant : this.space.getPlayers().participants()) {
                 if (participant.interactionManager.isSurvivalLike()) {
-                    players.sendMessage(Text.literal(participant.getNameForScoreboard() + " won!").formatted(Formatting.GOLD));
-                    this.gameCloseTick = this.space.getTime() + (20 * 10);
+                    this.endGame(Text.literal(participant.getNameForScoreboard() + " won!").formatted(Formatting.GOLD));
                     break;
                 }
             }
+        } else if (survival == 0) {
+            this.endGame(Text.literal("Nobody won!").formatted(Formatting.GOLD));
         }
     }
 
     private void spawnSpectator(ServerPlayerEntity player, ServerWorld world) {
         this.spawnLogic.resetPlayer(player, GameMode.SPECTATOR);
         this.spawnLogic.spawnPlayerAtCenter(player, world);
+    }
+
+    private void endGame(Text message) {
+        this.space.getPlayers().sendMessage(message);
+        this.gameCloseTick = this.space.getTime() + (20 * 10);
     }
 
     private EventResult onBreakBlock(ServerPlayerEntity player, ServerWorld world, BlockPos pos) {
