@@ -1,34 +1,33 @@
 package supercoder79.survivalgames.game.map.biome.nether;
 
 import kdotjpg.opensimplex.OpenSimplexNoise;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import supercoder79.survivalgames.game.map.biome.BiomeGen;
 import supercoder79.survivalgames.game.map.gen.BranchingTreeGen;
 import supercoder79.survivalgames.game.map.gen.FireGen;
 import xyz.nucleoid.substrate.gen.MapGen;
-
-import net.minecraft.util.math.random.Random;
 
 public final class SoulSandValleyGen implements BiomeGen {
     public static final SoulSandValleyGen INSTANCE = new SoulSandValleyGen();
     private static final OpenSimplexNoise SAND_NOISE = new OpenSimplexNoise(23);
 
     @Override
-    public BlockState topState(Random random, int x, int z) {
+    public BlockState topState(RandomSource random, int x, int z) {
         if (random.nextDouble() <= 0.1 + SAND_NOISE.eval(x / 30.0, z / 30.0) * 1.5) {
-            return Blocks.SOUL_SAND.getDefaultState();
+            return Blocks.SOUL_SAND.defaultBlockState();
         }
 
-        return Blocks.SOUL_SOIL.getDefaultState();
+        return Blocks.SOUL_SOIL.defaultBlockState();
     }
 
     @Override
-    public BlockState underState(Random random, int x, int z) {
-        return Blocks.SOUL_SOIL.getDefaultState();
+    public BlockState underState(RandomSource random, int x, int z) {
+        return Blocks.SOUL_SOIL.defaultBlockState();
     }
 
     @Override
@@ -67,7 +66,7 @@ public final class SoulSandValleyGen implements BiomeGen {
     }
 
     @Override
-    public MapGen tree(int x, int z, Random random) {
+    public MapGen tree(int x, int z, RandomSource random) {
         if (random.nextInt(3) == 0) {
             return FireGen.INSTANCE;
         }
@@ -80,8 +79,8 @@ public final class SoulSandValleyGen implements BiomeGen {
     }
 
     @Override
-    public RegistryKey<Biome> getFakingBiome() {
-        return BiomeKeys.SOUL_SAND_VALLEY;
+    public ResourceKey<Biome> getFakingBiome() {
+        return Biomes.SOUL_SAND_VALLEY;
     }
 
 }

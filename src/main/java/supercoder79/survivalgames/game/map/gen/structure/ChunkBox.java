@@ -2,9 +2,8 @@ package supercoder79.survivalgames.game.map.gen.structure;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.ChunkPos;
 
 public final class ChunkBox {
 	private int minX;
@@ -20,14 +19,14 @@ public final class ChunkBox {
 	}
 
 	public void encompass(ChunkPos pos) {
-		this.minX = Math.min(pos.x, this.minX);
-		this.minZ = Math.min(pos.z, this.minZ);
-		this.maxX = Math.max(pos.x, this.maxX);
-		this.maxZ = Math.max(pos.x, this.maxZ);
+		this.minX = Math.min(pos.x(), this.minX);
+		this.minZ = Math.min(pos.z(), this.minZ);
+		this.maxX = Math.max(pos.x(), this.maxX);
+		this.maxZ = Math.max(pos.x(), this.maxZ);
 	}
 
 	public boolean isIn(ChunkPos pos) {
-		return isIn(pos.x, pos.z);
+		return isIn(pos.x(), pos.z());
 	}
 
 	public boolean isIn(int x, int z) {
@@ -64,7 +63,7 @@ public final class ChunkBox {
 
 		for(int x = this.minX; x <= this.maxX; x++) {
 			for(int z = this.minZ; z <= this.maxZ; z++) {
-				positions.add(ChunkPos.toLong(x, z));
+				positions.add(ChunkPos.pack(x, z));
 			}
 		}
 

@@ -1,18 +1,17 @@
 package supercoder79.survivalgames.game.map.biome.alpine;
 
 import kdotjpg.opensimplex.OpenSimplexNoise;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import supercoder79.survivalgames.game.map.biome.BiomeGen;
 import supercoder79.survivalgames.game.map.gen.GroundCoverGen;
 import supercoder79.survivalgames.game.map.gen.TaigaTreeGen;
 import xyz.nucleoid.substrate.gen.GrassGen;
 import xyz.nucleoid.substrate.gen.MapGen;
-
-import net.minecraft.util.math.random.Random;
 
 public class AlpineCliffsGen implements BiomeGen {
     public static final BiomeGen INSTANCE = new AlpineCliffsGen();
@@ -54,25 +53,25 @@ public class AlpineCliffsGen implements BiomeGen {
     }
 
     @Override
-    public BlockState topState(Random random, int x, int z) {
+    public BlockState topState(RandomSource random, int x, int z) {
         if (POWDER_SNOW_NOISE.eval(x / 16.0, z / 16.0) <= 0.25 + (random.nextDouble() * 0.05)) {
-            return Blocks.POWDER_SNOW.getDefaultState();
+            return Blocks.POWDER_SNOW.defaultBlockState();
         }
-        return Blocks.GRASS_BLOCK.getDefaultState();
+        return Blocks.GRASS_BLOCK.defaultBlockState();
     }
 
     @Override
-    public BlockState underState(Random random, int x, int z) {
-        return Blocks.STONE.getDefaultState();
+    public BlockState underState(RandomSource random, int x, int z) {
+        return Blocks.STONE.defaultBlockState();
     }
 
     @Override
-    public BlockState underWaterState(Random random, int x, int z) {
+    public BlockState underWaterState(RandomSource random, int x, int z) {
         return BiomeGen.super.underWaterState(random, x, z);
     }
 
     @Override
-    public MapGen tree(int x, int z, Random random) {
+    public MapGen tree(int x, int z, RandomSource random) {
         return TaigaTreeGen.INSTANCE;
     }
 
@@ -82,17 +81,17 @@ public class AlpineCliffsGen implements BiomeGen {
     }
 
     @Override
-    public int grassChance(int x, int z, Random random) {
+    public int grassChance(int x, int z, RandomSource random) {
         return 512;
     }
 
     @Override
-    public MapGen grass(int x, int z, Random random) {
+    public MapGen grass(int x, int z, RandomSource random) {
         return GrassGen.INSTANCE;
     }
 
     @Override
-    public RegistryKey<Biome> getFakingBiome() {
-        return BiomeKeys.SNOWY_SLOPES;
+    public ResourceKey<Biome> getFakingBiome() {
+        return Biomes.SNOWY_SLOPES;
     }
 }

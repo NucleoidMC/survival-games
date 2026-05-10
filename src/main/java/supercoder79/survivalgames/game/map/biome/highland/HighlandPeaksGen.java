@@ -1,17 +1,16 @@
 package supercoder79.survivalgames.game.map.biome.highland;
 
 import kdotjpg.opensimplex.OpenSimplexNoise;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Identifier;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import supercoder79.survivalgames.game.map.biome.BiomeGen;
 import supercoder79.survivalgames.game.map.gen.ThistleGen;
 import xyz.nucleoid.substrate.gen.MapGen;
-
-import net.minecraft.util.math.random.Random;
 
 public class HighlandPeaksGen implements BiomeGen {
     public static final BiomeGen INSTANCE = new HighlandPeaksGen();
@@ -20,8 +19,8 @@ public class HighlandPeaksGen implements BiomeGen {
     public final OpenSimplexNoise GRANITE_NOISE = new OpenSimplexNoise(25);
 
     @Override
-    public RegistryKey<Biome> getFakingBiome() {
-        return RegistryKey.of(RegistryKeys.BIOME, Identifier.of("survivalgames", "highland"));
+    public ResourceKey<Biome> getFakingBiome() {
+        return ResourceKey.create(Registries.BIOME, Identifier.fromNamespaceAndPath("survivalgames", "highland"));
     }
 
     @Override
@@ -65,21 +64,21 @@ public class HighlandPeaksGen implements BiomeGen {
     }
 
     @Override
-    public BlockState topState(Random random, int x, int z) {
+    public BlockState topState(RandomSource random, int x, int z) {
         if (random.nextDouble() < GRASS_NOISE.eval(x / 45.0, z / 45.0) + 0.25) {
-            return Blocks.GRASS_BLOCK.getDefaultState();
+            return Blocks.GRASS_BLOCK.defaultBlockState();
         } else if (random.nextDouble() < SNOW_NOISE.eval(x / 45.0, z / 45.0) + 0.2) {
-            return Blocks.SNOW_BLOCK.getDefaultState();
+            return Blocks.SNOW_BLOCK.defaultBlockState();
         } else if (random.nextDouble() + 0.1 < GRANITE_NOISE.eval(x / 45.0, z / 45.0) / 12) {
-            return Blocks.GRANITE.getDefaultState();
+            return Blocks.GRANITE.defaultBlockState();
         }
 
-        return Blocks.STONE.getDefaultState();
+        return Blocks.STONE.defaultBlockState();
     }
 
     @Override
-    public BlockState underState(Random random, int x, int z) {
-        return Blocks.STONE.getDefaultState();
+    public BlockState underState(RandomSource random, int x, int z) {
+        return Blocks.STONE.defaultBlockState();
     }
 
     @Override
@@ -88,12 +87,12 @@ public class HighlandPeaksGen implements BiomeGen {
     }
 
     @Override
-    public int grassChance(int x, int z, Random random) {
+    public int grassChance(int x, int z, RandomSource random) {
         return 16;
     }
 
     @Override
-    public MapGen grass(int x, int z, Random random) {
+    public MapGen grass(int x, int z, RandomSource random) {
         return ThistleGen.INSTANCE;
     }
 }

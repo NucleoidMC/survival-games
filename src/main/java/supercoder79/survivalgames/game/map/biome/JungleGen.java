@@ -1,28 +1,26 @@
 package supercoder79.survivalgames.game.map.biome;
 
-import net.minecraft.util.math.random.Random;
-
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import supercoder79.survivalgames.game.map.gen.BranchingTreeGen;
 import xyz.nucleoid.substrate.gen.MapGen;
 import xyz.nucleoid.substrate.gen.ShrubGen;
-
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
 
 public final class JungleGen implements BiomeGen {
     public static final JungleGen INSTANCE = new JungleGen();
 
 	@Override
-	public BlockState topState(Random random, int x, int z) {
-		return Blocks.GRASS_BLOCK.getDefaultState();
+	public BlockState topState(RandomSource random, int x, int z) {
+		return Blocks.GRASS_BLOCK.defaultBlockState();
 	}
 
 	@Override
-	public BlockState underState(Random random, int x, int z) {
-		return Blocks.DIRT.getDefaultState();
+	public BlockState underState(RandomSource random, int x, int z) {
+		return Blocks.DIRT.defaultBlockState();
 	}
 
 	@Override
@@ -51,7 +49,7 @@ public final class JungleGen implements BiomeGen {
 	}
 
 	@Override
-	public MapGen tree(int x, int z, Random random) {
+	public MapGen tree(int x, int z, RandomSource random) {
 		if (random.nextInt(3) == 0) {
 			return ShrubGen.INSTANCE;
 		}
@@ -65,12 +63,12 @@ public final class JungleGen implements BiomeGen {
 	}
 
 	@Override
-	public RegistryKey<Biome> getFakingBiome() {
-		return BiomeKeys.JUNGLE;
+	public ResourceKey<Biome> getFakingBiome() {
+		return Biomes.JUNGLE;
 	}
 
 	@Override
-	public int grassChance(int x, int z, Random random) {
+	public int grassChance(int x, int z, RandomSource random) {
 		return 4;
 	}
 }

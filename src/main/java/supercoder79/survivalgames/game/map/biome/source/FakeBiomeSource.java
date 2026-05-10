@@ -5,20 +5,16 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.gegy.noise.sampler.NoiseSampler2d;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryCodecs;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 import supercoder79.survivalgames.noise.simplex.OpenSimplexNoise;
 import supercoder79.survivalgames.SurvivalGames;
 import supercoder79.survivalgames.game.map.biome.*;
 import supercoder79.survivalgames.game.map.biome.generator.BiomeGenerator;
-
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.source.BiomeSource;
-
 import java.util.stream.Stream;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeSource;
+import net.minecraft.world.level.biome.Climate;
 
 public final class FakeBiomeSource extends BiomeSource {
 	private final Registry<Biome> biomeRegistry;
@@ -45,17 +41,17 @@ public final class FakeBiomeSource extends BiomeSource {
 	}
 
 	@Override
-	protected MapCodec<? extends BiomeSource> getCodec() {
+	protected MapCodec<? extends BiomeSource> codec() {
 		return MapCodec.unit(this);
 	}
 
 	@Override
-	protected Stream<RegistryEntry<Biome>> biomeStream() {
-		return this.biomeRegistry.stream().map(x -> this.biomeRegistry.getEntry(x));
+	protected Stream<Holder<Biome>> collectPossibleBiomes() {
+		return this.biomeRegistry.stream().map(x -> this.biomeRegistry.wrapAsHolder(x));
 	}
 
 	@Override
-	public RegistryEntry<Biome> getBiome(int x, int y, int z, MultiNoiseUtil.MultiNoiseSampler noise) {
+	public Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.Sampler noise) {
 		return biomeRegistry.getOrThrow(getRealBiome(x << 2, z << 2).getFakingBiome());
 	}
 

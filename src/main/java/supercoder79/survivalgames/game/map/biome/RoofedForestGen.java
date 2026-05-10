@@ -1,19 +1,17 @@
 package supercoder79.survivalgames.game.map.biome;
 
-import net.minecraft.util.math.random.Random;
-
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import supercoder79.survivalgames.game.map.gen.BranchingTreeGen;
 import xyz.nucleoid.substrate.gen.MapGen;
-
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
 
 public final class RoofedForestGen implements BiomeGen {
 	public static final RoofedForestGen INSTANCE = new RoofedForestGen();
 
 	@Override
-	public MapGen tree(int x, int z, Random random) {
+	public MapGen tree(int x, int z, RandomSource random) {
 		return BranchingTreeGen.DARK_OAK;
 	}
 
@@ -23,7 +21,7 @@ public final class RoofedForestGen implements BiomeGen {
 	}
 
 	@Override
-	public RegistryKey<Biome> getFakingBiome() {
-		return BiomeKeys.DARK_FOREST;
+	public ResourceKey<Biome> getFakingBiome() {
+		return Biomes.DARK_FOREST;
 	}
 }

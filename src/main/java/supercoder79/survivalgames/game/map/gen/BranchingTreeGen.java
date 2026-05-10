@@ -1,25 +1,25 @@
 package supercoder79.survivalgames.game.map.gen;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.ServerWorldAccess;
 import xyz.nucleoid.substrate.gen.MapGen;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 public class BranchingTreeGen implements MapGen {
-    public static final MapGen DARK_OAK = new BranchingTreeGen(Blocks.DARK_OAK_LOG.getDefaultState(), Blocks.DARK_OAK_LEAVES.getDefaultState().with(Properties.DISTANCE_1_7, 1), Blocks.GRASS_BLOCK.getDefaultState(), 8, 1);
-    public static final MapGen JUNGLE = new BranchingTreeGen(Blocks.JUNGLE_LOG.getDefaultState(), Blocks.JUNGLE_LEAVES.getDefaultState().with(Properties.DISTANCE_1_7, 1), Blocks.GRASS_BLOCK.getDefaultState(), 16, 1);
-    public static final MapGen ACACIA = new BranchingTreeGen(Blocks.ACACIA_LOG.getDefaultState(), Blocks.ACACIA_LEAVES.getDefaultState().with(Properties.DISTANCE_1_7, 1), Blocks.GRASS_BLOCK.getDefaultState(), 8, 3);
-    public static final MapGen WARPED = new BranchingTreeGen(Blocks.WARPED_STEM.getDefaultState(), Blocks.WARPED_WART_BLOCK.getDefaultState(), Blocks.WARPED_NYLIUM.getDefaultState(), 12, 0);
-    public static final MapGen CRIMSON = new BranchingTreeGen(Blocks.CRIMSON_STEM.getDefaultState(), Blocks.NETHER_WART_BLOCK.getDefaultState(), Blocks.CRIMSON_NYLIUM.getDefaultState(), 12, 0);
-    public static final MapGen BONE = new BranchingTreeGen(Blocks.BONE_BLOCK.getDefaultState(), Blocks.AIR.getDefaultState(), Blocks.SOUL_SOIL.getDefaultState(), 4, 1);
-    public static final MapGen BASALT_COLUMN = new BranchingTreeGen(Blocks.BASALT.getDefaultState(), Blocks.AIR.getDefaultState(), Blocks.BASALT.getDefaultState(), 6, 0);
+    public static final MapGen DARK_OAK = new BranchingTreeGen(Blocks.DARK_OAK_LOG.defaultBlockState(), Blocks.DARK_OAK_LEAVES.defaultBlockState().setValue(BlockStateProperties.DISTANCE, 1), Blocks.GRASS_BLOCK.defaultBlockState(), 8, 1);
+    public static final MapGen JUNGLE = new BranchingTreeGen(Blocks.JUNGLE_LOG.defaultBlockState(), Blocks.JUNGLE_LEAVES.defaultBlockState().setValue(BlockStateProperties.DISTANCE, 1), Blocks.GRASS_BLOCK.defaultBlockState(), 16, 1);
+    public static final MapGen ACACIA = new BranchingTreeGen(Blocks.ACACIA_LOG.defaultBlockState(), Blocks.ACACIA_LEAVES.defaultBlockState().setValue(BlockStateProperties.DISTANCE, 1), Blocks.GRASS_BLOCK.defaultBlockState(), 8, 3);
+    public static final MapGen WARPED = new BranchingTreeGen(Blocks.WARPED_STEM.defaultBlockState(), Blocks.WARPED_WART_BLOCK.defaultBlockState(), Blocks.WARPED_NYLIUM.defaultBlockState(), 12, 0);
+    public static final MapGen CRIMSON = new BranchingTreeGen(Blocks.CRIMSON_STEM.defaultBlockState(), Blocks.NETHER_WART_BLOCK.defaultBlockState(), Blocks.CRIMSON_NYLIUM.defaultBlockState(), 12, 0);
+    public static final MapGen BONE = new BranchingTreeGen(Blocks.BONE_BLOCK.defaultBlockState(), Blocks.AIR.defaultBlockState(), Blocks.SOUL_SOIL.defaultBlockState(), 4, 1);
+    public static final MapGen BASALT_COLUMN = new BranchingTreeGen(Blocks.BASALT.defaultBlockState(), Blocks.AIR.defaultBlockState(), Blocks.BASALT.defaultBlockState(), 6, 0);
 
     private final BlockState log;
     private final BlockState leaves;
@@ -36,19 +36,19 @@ public class BranchingTreeGen implements MapGen {
     }
 
     @Override
-    public void generate(ServerWorldAccess world, BlockPos pos, Random random) {
-        if (world.getBlockState(pos.down()) != this.plantable) return;
+    public void generate(ServerLevelAccessor world, BlockPos pos, RandomSource random) {
+        if (world.getBlockState(pos.below()) != this.plantable) return;
 
         int height = this.height + random.nextInt(Math.max(1, this.height / 4));
         int branchThreshold = (int) (height * 0.4);
         List<BlockPos> leaves = new ArrayList<>();
 
-        BlockPos.Mutable mutable = pos.mutableCopy();
+        BlockPos.MutableBlockPos mutable = pos.mutable();
         for (int y = 0; y <= height; y++) {
-            world.setBlockState(mutable, this.log, 3);
+            world.setBlock(mutable, this.log, 3);
 
             if (y > branchThreshold && random.nextInt(2) == 0) {
-                BlockPos local = mutable.toImmutable();
+                BlockPos local = mutable.immutable();
                 double theta = random.nextDouble() * Math.PI * 2;
                 // TODO: scale with height
                 int branchLength = random.nextInt(3) + this.branchLength;
@@ -57,16 +57,16 @@ public class BranchingTreeGen implements MapGen {
                     int dy = i / 2;
                     int dz = (int) (Math.sin(theta) * i);
 
-                    world.setBlockState(local.add(dx, dy, dz), this.log, 3);
+                    world.setBlock(local.offset(dx, dy, dz), this.log, 3);
 
                     if (i == branchLength) {
-                        leaves.add(local.add(dx, dy, dz).toImmutable());
+                        leaves.add(local.offset(dx, dy, dz).immutable());
                     }
                 }
             }
 
             if (y == height) {
-                BlockPos local = mutable.toImmutable();
+                BlockPos local = mutable.immutable();
                 int topCount = 2 + random.nextInt(3);
 
                 for (int i = 0; i < topCount; i++) {
@@ -79,10 +79,10 @@ public class BranchingTreeGen implements MapGen {
                         int dx = (int) (Math.cos(theta) * j);
                         int dz = (int) (Math.sin(theta) * j);
 
-                        world.setBlockState(local.add(dx, j, dz), this.log, 3);
+                        world.setBlock(local.offset(dx, j, dz), this.log, 3);
 
                         if (i == branchLength) {
-                            leaves.add(local.add(dx, j, dz).toImmutable());
+                            leaves.add(local.offset(dx, j, dz).immutable());
                         }
                     }
                 }
@@ -96,9 +96,9 @@ public class BranchingTreeGen implements MapGen {
         for (BlockPos leaf : leaves) {
             for (int x = -1; x <= 1; x++) {
                 for (int z = -1; z <= 1; z++) {
-                    BlockPos local = leaf.add(x, 1, z);
+                    BlockPos local = leaf.offset(x, 1, z);
                     if (world.getBlockState(local).isAir()) {
-                        world.setBlockState(local, this.leaves, 3);
+                        world.setBlock(local, this.leaves, 3);
                     }
                 }
             }
@@ -107,9 +107,9 @@ public class BranchingTreeGen implements MapGen {
                 for (int z = -2; z <= 2; z++) {
                     if (Math.abs(x) == 2 && Math.abs(z) == 2) continue;
 
-                    BlockPos local = leaf.add(x, 0, z);
+                    BlockPos local = leaf.offset(x, 0, z);
                     if (world.getBlockState(local).isAir()) {
-                        world.setBlockState(local, this.leaves, 3);
+                        world.setBlock(local, this.leaves, 3);
                     }
                 }
             }

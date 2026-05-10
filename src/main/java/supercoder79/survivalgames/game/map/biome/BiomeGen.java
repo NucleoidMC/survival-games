@@ -1,14 +1,12 @@
 package supercoder79.survivalgames.game.map.biome;
 
-import net.minecraft.util.math.random.Random;
-
 import xyz.nucleoid.substrate.gen.MapGen;
 import xyz.nucleoid.substrate.gen.GrassGen;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import xyz.nucleoid.substrate.biome.BaseBiomeGen;
 import xyz.nucleoid.substrate.gen.tree.PoplarTreeGen;
-
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 
 public interface BiomeGen extends BaseBiomeGen {
 	default double baseHeight() {
@@ -42,19 +40,19 @@ public interface BiomeGen extends BaseBiomeGen {
 		return 3.25;
 	}
 
-	default BlockState topState(Random random, int x, int z) {
-		return Blocks.GRASS_BLOCK.getDefaultState();
+	default BlockState topState(RandomSource random, int x, int z) {
+		return Blocks.GRASS_BLOCK.defaultBlockState();
 	}
 
-	default BlockState underState(Random random, int x, int z) {
-		return Blocks.DIRT.getDefaultState();
+	default BlockState underState(RandomSource random, int x, int z) {
+		return Blocks.DIRT.defaultBlockState();
 	}
 
-	default BlockState underWaterState(Random random, int x, int z) {
+	default BlockState underWaterState(RandomSource random, int x, int z) {
 		return underState(random, x, z);
 	}
 
-	default MapGen tree(int x, int z, Random random) {
+	default MapGen tree(int x, int z, RandomSource random) {
 		return PoplarTreeGen.INSTANCE;
 	}
 
@@ -62,11 +60,11 @@ public interface BiomeGen extends BaseBiomeGen {
 		return original;
 	}
 
-	default int grassChance(int x, int z, Random random) {
+	default int grassChance(int x, int z, RandomSource random) {
 		return 16;
 	}
 
-	default MapGen grass(int x, int z, Random random) {
+	default MapGen grass(int x, int z, RandomSource random) {
 		return GrassGen.INSTANCE;
 	}
 }

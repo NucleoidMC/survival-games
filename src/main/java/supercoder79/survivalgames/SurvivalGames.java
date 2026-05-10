@@ -7,10 +7,9 @@ import supercoder79.survivalgames.game.map.gen.processor.SurvivalGamesProcessorT
 import xyz.nucleoid.plasmid.api.game.GameType;
 import supercoder79.survivalgames.game.config.SurvivalGamesConfig;
 import supercoder79.survivalgames.game.map.noise.NoiseGenerators;
-
-import net.minecraft.util.Identifier;
-
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.resources.Identifier;
+import xyz.nucleoid.plasmid.api.game.GameTypes;
 import xyz.nucleoid.plasmid.api.game.rule.GameRuleType;
 
 public class SurvivalGames implements ModInitializer {
@@ -23,8 +22,8 @@ public class SurvivalGames implements ModInitializer {
 		BiomeGenerators.init();
 		NoiseGenerators.init();
 
-		GameType.register(
-				Identifier.of("survivalgames", "survivalgames"),
+		GameTypes.register(
+				Identifier.fromNamespaceAndPath("survivalgames", "survivalgames"),
 				SurvivalGamesConfig.CODEC,
 				SurvivalGamesWaiting::open
 		);

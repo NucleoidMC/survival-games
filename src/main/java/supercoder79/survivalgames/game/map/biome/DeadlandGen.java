@@ -1,14 +1,12 @@
 package supercoder79.survivalgames.game.map.biome;
 
-import net.minecraft.util.math.random.Random;
-
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import xyz.nucleoid.substrate.gen.MapGen;
 import xyz.nucleoid.substrate.gen.ShrubGen;
 import xyz.nucleoid.substrate.gen.tree.DeadTreeGen;
-
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
 
 public final class DeadlandGen implements BiomeGen {
 	public static final DeadlandGen INSTANCE = new DeadlandGen();
@@ -39,7 +37,7 @@ public final class DeadlandGen implements BiomeGen {
 	}
 
 	@Override
-	public MapGen tree(int x, int z, Random random) {
+	public MapGen tree(int x, int z, RandomSource random) {
 		if (random.nextInt(4) == 0) {
 			return DeadTreeGen.INSTANCE;
 		}
@@ -53,12 +51,12 @@ public final class DeadlandGen implements BiomeGen {
 	}
 
 	@Override
-	public int grassChance(int x, int z, Random random) {
+	public int grassChance(int x, int z, RandomSource random) {
 		return 32;
 	}
 
 	@Override
-	public RegistryKey<Biome> getFakingBiome() {
-		return BiomeKeys.SAVANNA;
+	public ResourceKey<Biome> getFakingBiome() {
+		return Biomes.SAVANNA;
 	}
 }

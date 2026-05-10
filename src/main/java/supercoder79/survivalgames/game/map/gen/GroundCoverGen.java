@@ -1,15 +1,14 @@
 package supercoder79.survivalgames.game.map.gen;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ServerWorldAccess;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import xyz.nucleoid.substrate.gen.MapGen;
 
-import net.minecraft.util.math.random.Random;
-
 public class GroundCoverGen implements MapGen {
-    public static MapGen SNOW = new GroundCoverGen(Blocks.SNOW.getDefaultState(), 1);
+    public static MapGen SNOW = new GroundCoverGen(Blocks.SNOW.defaultBlockState(), 1);
     private final BlockState state;
     private final int chance;
 
@@ -19,9 +18,9 @@ public class GroundCoverGen implements MapGen {
     }
 
     @Override
-    public void generate(ServerWorldAccess world, BlockPos pos, Random random) {
-        if (random.nextInt(chance) == 0 && world.isAir(pos)) {
-            world.setBlockState(pos, state, 0);
+    public void generate(ServerLevelAccessor world, BlockPos pos, RandomSource random) {
+        if (random.nextInt(chance) == 0 && world.isEmptyBlock(pos)) {
+            world.setBlock(pos, state, 0);
         }
     }
 }

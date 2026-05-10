@@ -1,22 +1,21 @@
 package supercoder79.survivalgames.game.map.biome;
 
 import kdotjpg.opensimplex.OpenSimplexNoise;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import supercoder79.survivalgames.game.map.gen.IceSpikesMapGen;
 import xyz.nucleoid.substrate.gen.MapGen;
-
-import net.minecraft.util.math.random.Random;
 
 public class IceSpikesGen implements BiomeGen {
     public static final BiomeGen INSTANCE = new IceSpikesGen();
 
     @Override
-    public RegistryKey<Biome> getFakingBiome() {
-        return BiomeKeys.ICE_SPIKES;
+    public ResourceKey<Biome> getFakingBiome() {
+        return Biomes.ICE_SPIKES;
     }
 
     @Override
@@ -55,22 +54,22 @@ public class IceSpikesGen implements BiomeGen {
     }
 
     @Override
-    public BlockState topState(Random random, int x, int z) {
-        return Blocks.SNOW_BLOCK.getDefaultState();
+    public BlockState topState(RandomSource random, int x, int z) {
+        return Blocks.SNOW_BLOCK.defaultBlockState();
     }
 
     @Override
-    public BlockState underState(Random random, int x, int z) {
-        return Blocks.SNOW_BLOCK.getDefaultState();
+    public BlockState underState(RandomSource random, int x, int z) {
+        return Blocks.SNOW_BLOCK.defaultBlockState();
     }
 
     @Override
-    public BlockState underWaterState(Random random, int x, int z) {
-        return Blocks.STONE.getDefaultState();
+    public BlockState underWaterState(RandomSource random, int x, int z) {
+        return Blocks.STONE.defaultBlockState();
     }
 
     @Override
-    public MapGen tree(int x, int z, Random random) {
+    public MapGen tree(int x, int z, RandomSource random) {
         return IceSpikesMapGen.INSTANCE;
     }
 
@@ -80,12 +79,12 @@ public class IceSpikesGen implements BiomeGen {
     }
 
     @Override
-    public int grassChance(int x, int z, Random random) {
+    public int grassChance(int x, int z, RandomSource random) {
         return 512;
     }
 
     @Override
-    public MapGen grass(int x, int z, Random random) {
+    public MapGen grass(int x, int z, RandomSource random) {
         return BiomeGen.super.grass(x, z, random);
     }
 }

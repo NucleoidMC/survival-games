@@ -2,9 +2,7 @@ package supercoder79.survivalgames.game.map.gen.structure;
 
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
-
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.level.ChunkPos;
 
 public final class ChunkMask {
 	private final LongSet chunks = new LongOpenHashSet();
@@ -14,7 +12,7 @@ public final class ChunkMask {
 	}
 
 	public void and(ChunkPos pos) {
-		chunks.add(pos.toLong());
+		chunks.add(pos.pack());
 	}
 
 	public void and(ChunkBox box) {
@@ -22,10 +20,10 @@ public final class ChunkMask {
 	}
 
 	public boolean isIn(ChunkPos pos) {
-		return chunks.contains(pos.toLong());
+		return chunks.contains(pos.pack());
 	}
 
 	public boolean isIn(int x, int z) {
-		return chunks.contains(ChunkPos.toLong(x, z));
+		return chunks.contains(ChunkPos.pack(x, z));
 	}
 }

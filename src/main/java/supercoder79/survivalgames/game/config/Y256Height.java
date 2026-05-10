@@ -1,8 +1,8 @@
 package supercoder79.survivalgames.game.config;
 
-import net.minecraft.world.HeightLimitView;
+import net.minecraft.world.level.LevelHeightAccessor;
 
-public final class Y256Height implements HeightLimitView {
+public final class Y256Height implements LevelHeightAccessor {
     public static final Y256Height INSTANCE = new Y256Height();
 
     @Override
@@ -11,7 +11,7 @@ public final class Y256Height implements HeightLimitView {
     }
 
     @Override
-    public int getBottomY() {
+    public int getMinY() {
         return 0;
     }
 }

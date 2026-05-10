@@ -1,7 +1,7 @@
 package supercoder79.survivalgames.game.map.loot;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class LootProviders {
 

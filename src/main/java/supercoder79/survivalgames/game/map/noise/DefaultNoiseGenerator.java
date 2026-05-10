@@ -1,19 +1,17 @@
 package supercoder79.survivalgames.game.map.noise;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.util.math.random.Random;
-
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.gegy.noise.sampler.NoiseSampler2d;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import supercoder79.survivalgames.SurvivalGames;
 import supercoder79.survivalgames.game.config.SurvivalGamesConfig;
 import supercoder79.survivalgames.game.map.biome.BiomeGen;
 import supercoder79.survivalgames.game.map.biome.blend.CachingBlender;
 import supercoder79.survivalgames.game.map.biome.blend.LinkedBiomeWeightMap;
 import supercoder79.survivalgames.game.map.biome.source.FakeBiomeSource;
-import net.minecraft.util.math.MathHelper;
 import supercoder79.survivalgames.noise.simplex.OpenSimplexNoise;
 
 public class DefaultNoiseGenerator implements NoiseGenerator {
@@ -39,7 +37,7 @@ public class DefaultNoiseGenerator implements NoiseGenerator {
 	}
 
 	@Override
-	public void initialize(Random random, SurvivalGamesConfig config) {
+	public void initialize(RandomSource random, SurvivalGamesConfig config) {
 		this.seed = random.nextLong();
 		this.baseNoise = compile(random, 256.0);
 		this.interpolationNoise = compile(random, 50.0);
@@ -52,7 +50,7 @@ public class DefaultNoiseGenerator implements NoiseGenerator {
 		this.riverDepthNoise = compile(random, 60.0);
 	}
 
-	public static NoiseSampler2d compile(Random random, double scale) {
+	public static NoiseSampler2d compile(RandomSource random, double scale) {
 		return SurvivalGames.NOISE_COMPILER.compile(OpenSimplexNoise.create().scale(1 / scale, 1 / scale), NoiseSampler2d.TYPE).create(random.nextLong());
 	}
 
@@ -106,7 +104,7 @@ public class DefaultNoiseGenerator implements NoiseGenerator {
 			double lowerNoise = lowerInterpolatedNoise.get(x, z);
 			lowerNoise *= lowerNoise > 0 ? lowerLerpHigh : lowerLerpLow;
 
-			noise += MathHelper.lerp(lerp, lowerNoise, upperNoise);
+			noise += Mth.lerp(lerp, lowerNoise, upperNoise);
 		}
 
 		noise += baseHeight;
@@ -120,7 +118,7 @@ public class DefaultNoiseGenerator implements NoiseGenerator {
 			if (river > -0.24 && river < 0.24) {
 				double depth = -10 + this.riverDepthNoise.get(x, z) * 1.75;
 
-				noise = MathHelper.lerp(smoothstep(river / 0.24), noise, depth);
+				noise = Mth.lerp(smoothstep(river / 0.24), noise, depth);
 			}
 		}
 

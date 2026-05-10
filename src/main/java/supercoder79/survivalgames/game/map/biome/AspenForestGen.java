@@ -1,18 +1,17 @@
 package supercoder79.survivalgames.game.map.biome;
 
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import xyz.nucleoid.substrate.gen.MapGen;
 import xyz.nucleoid.substrate.gen.tree.AspenTreeGen;
-
-import net.minecraft.util.math.random.Random;
 
 public final class AspenForestGen implements BiomeGen {
 	public static final AspenForestGen INSTANCE = new AspenForestGen();
 
 	@Override
-	public MapGen tree(int x, int z, Random random) {
+	public MapGen tree(int x, int z, RandomSource random) {
 		return AspenTreeGen.INSTANCE;
 	}
 
@@ -22,7 +21,7 @@ public final class AspenForestGen implements BiomeGen {
 	}
 
 	@Override
-	public RegistryKey<Biome> getFakingBiome() {
-		return BiomeKeys.BIRCH_FOREST;
+	public ResourceKey<Biome> getFakingBiome() {
+		return Biomes.BIRCH_FOREST;
 	}
 }

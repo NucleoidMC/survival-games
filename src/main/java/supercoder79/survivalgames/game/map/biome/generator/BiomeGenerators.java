@@ -3,7 +3,7 @@ package supercoder79.survivalgames.game.map.biome.generator;
 import com.mojang.serialization.Codec;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 public final class BiomeGenerators {
 	public static void init() {
@@ -16,6 +16,6 @@ public final class BiomeGenerators {
 	}
 
 	public static void register(String name, MapCodec<? extends BiomeGenerator> generator) {
-		BiomeGenerator.REGISTRY.register(Identifier.of("survivalgames", name), generator);
+		BiomeGenerator.REGISTRY.register(Identifier.fromNamespaceAndPath("survivalgames", name), generator);
 	}
 }

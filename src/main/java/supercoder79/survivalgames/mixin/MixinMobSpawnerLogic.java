@@ -1,9 +1,8 @@
 package supercoder79.survivalgames.mixin;
 
-import net.minecraft.block.spawner.MobSpawnerLogic;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.BaseSpawner;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -12,12 +11,12 @@ import supercoder79.survivalgames.SurvivalGames;
 import xyz.nucleoid.plasmid.api.game.GameSpaceManager;
 import xyz.nucleoid.stimuli.event.EventResult;
 
-@Mixin(MobSpawnerLogic.class)
+@Mixin(BaseSpawner.class)
 public class MixinMobSpawnerLogic {
     @Inject(method = "serverTick", at = @At("HEAD"), cancellable = true)
-    private void disableInSG(ServerWorld world, BlockPos pos, CallbackInfo ci) {
+    private void disableInSG(ServerLevel world, BlockPos pos, CallbackInfo ci) {
         // Disable mob spawners as we handle their behavior
-        var space = GameSpaceManager.get().byWorld(world);
+        var space = GameSpaceManager.get().byLevel(world);
 
         if (space != null && space.getBehavior().testRule(SurvivalGames.DISABLE_SPAWNERS) == EventResult.ALLOW) {
             ci.cancel();

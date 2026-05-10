@@ -1,22 +1,21 @@
 package supercoder79.survivalgames.game.map.biome.alpine;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.state.BlockState;
 import supercoder79.survivalgames.game.map.biome.BiomeGen;
 import supercoder79.survivalgames.game.map.gen.GroundCoverGen;
 import supercoder79.survivalgames.game.map.gen.TaigaTreeGen;
 import xyz.nucleoid.substrate.gen.MapGen;
 
-import net.minecraft.util.math.random.Random;
-
 public class AlpineSlopedForestGen implements BiomeGen {
     public static BiomeGen INSTANCE = new AlpineSlopedForestGen();
 
     @Override
-    public RegistryKey<Biome> getFakingBiome() {
-        return BiomeKeys.SNOWY_TAIGA;
+    public ResourceKey<Biome> getFakingBiome() {
+        return Biomes.SNOWY_TAIGA;
     }
 
     @Override
@@ -55,22 +54,22 @@ public class AlpineSlopedForestGen implements BiomeGen {
     }
 
     @Override
-    public BlockState topState(Random random, int x, int z) {
+    public BlockState topState(RandomSource random, int x, int z) {
         return BiomeGen.super.topState(random, x, z);
     }
 
     @Override
-    public BlockState underState(Random random, int x, int z) {
+    public BlockState underState(RandomSource random, int x, int z) {
         return BiomeGen.super.underState(random, x, z);
     }
 
     @Override
-    public BlockState underWaterState(Random random, int x, int z) {
+    public BlockState underWaterState(RandomSource random, int x, int z) {
         return BiomeGen.super.underWaterState(random, x, z);
     }
 
     @Override
-    public MapGen tree(int x, int z, Random random) {
+    public MapGen tree(int x, int z, RandomSource random) {
         return TaigaTreeGen.INSTANCE;
     }
 
@@ -80,12 +79,12 @@ public class AlpineSlopedForestGen implements BiomeGen {
     }
 
     @Override
-    public int grassChance(int x, int z, Random random) {
+    public int grassChance(int x, int z, RandomSource random) {
         return (int) (BiomeGen.super.grassChance(x, z, random) / 1.5);
     }
 
     @Override
-    public MapGen grass(int x, int z, Random random) {
+    public MapGen grass(int x, int z, RandomSource random) {
         return GroundCoverGen.SNOW;
     }
 }

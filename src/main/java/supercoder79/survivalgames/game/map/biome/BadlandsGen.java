@@ -1,16 +1,15 @@
 package supercoder79.survivalgames.game.map.biome;
 
-import net.minecraft.util.math.random.Random;
-
 import xyz.nucleoid.substrate.gen.MapGen;
 import xyz.nucleoid.substrate.gen.ShrubGen;
 import xyz.nucleoid.substrate.gen.tree.PoplarTreeGen;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
 import kdotjpg.opensimplex.OpenSimplexNoise;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class BadlandsGen implements BiomeGen {
     public static final BadlandsGen INSTANCE = new BadlandsGen();
@@ -19,29 +18,29 @@ public class BadlandsGen implements BiomeGen {
     public static final OpenSimplexNoise RED_TERRACOTTA_NOISE = new OpenSimplexNoise(13);
 
     @Override
-    public BlockState topState(Random random, int x, int z) {
+    public BlockState topState(RandomSource random, int x, int z) {
         if (random.nextDouble() <= 0.1 + GRASS_NOISE.eval(x / 30.0, z / 30.0) * 0.1) {
-            return Blocks.GRASS_BLOCK.getDefaultState();
+            return Blocks.GRASS_BLOCK.defaultBlockState();
         }
 
         if (random.nextDouble() <= 0.1 + TERRACOTTA_NOISE.eval(x / 30.0, z / 30.0) * 0.1) {
-            return Blocks.TERRACOTTA.getDefaultState();
+            return Blocks.TERRACOTTA.defaultBlockState();
         }
 
         if (random.nextDouble() <= 0.1 + RED_TERRACOTTA_NOISE.eval(x / 30.0, z / 30.0) * 0.1) {
-            return Blocks.RED_TERRACOTTA.getDefaultState();
+            return Blocks.RED_TERRACOTTA.defaultBlockState();
         }
 
-        return Blocks.RED_SAND.getDefaultState();
+        return Blocks.RED_SAND.defaultBlockState();
     }
 
     @Override
-    public BlockState underState(Random random, int x, int z) {
+    public BlockState underState(RandomSource random, int x, int z) {
         if (random.nextInt(3) == 0) {
-            return Blocks.RED_TERRACOTTA.getDefaultState();
+            return Blocks.RED_TERRACOTTA.defaultBlockState();
         }
 
-        return Blocks.TERRACOTTA.getDefaultState();
+        return Blocks.TERRACOTTA.defaultBlockState();
     }
 
     @Override
@@ -75,7 +74,7 @@ public class BadlandsGen implements BiomeGen {
     }
 
     @Override
-    public MapGen tree(int x, int z, Random random) {
+    public MapGen tree(int x, int z, RandomSource random) {
         if (random.nextInt(3) == 0) {
             return PoplarTreeGen.INSTANCE;
         }
@@ -89,12 +88,12 @@ public class BadlandsGen implements BiomeGen {
     }
 
     @Override
-    public int grassChance(int x, int z, Random random) {
+    public int grassChance(int x, int z, RandomSource random) {
         return 12;
     }
 
     @Override
-    public RegistryKey<Biome> getFakingBiome() {
-        return BiomeKeys.DESERT;
+    public ResourceKey<Biome> getFakingBiome() {
+        return Biomes.DESERT;
     }
 }

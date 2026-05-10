@@ -1,8 +1,7 @@
 package supercoder79.survivalgames.game.logic;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.util.ActionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import xyz.nucleoid.stimuli.event.EventResult;
 
 public interface ActiveLogic {

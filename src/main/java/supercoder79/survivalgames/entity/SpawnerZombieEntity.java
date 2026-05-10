@@ -1,15 +1,15 @@
 package supercoder79.survivalgames.entity;
 
-import net.minecraft.entity.mob.ZombieEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.level.Level;
 
-public final class SpawnerZombieEntity extends ZombieEntity {
-    public SpawnerZombieEntity(World world) {
+public final class SpawnerZombieEntity extends Zombie {
+    public SpawnerZombieEntity(Level world) {
         super(world);
     }
 
     @Override
-    protected boolean burnsInDaylight() {
+    protected boolean isSunSensitive() {
         return false;
     }
 }

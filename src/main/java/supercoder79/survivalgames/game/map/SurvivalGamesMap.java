@@ -4,7 +4,7 @@ import supercoder79.survivalgames.game.GenerationTracker;
 import supercoder79.survivalgames.game.config.SurvivalGamesConfig;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.gen.chunk.ChunkGenerator;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 
 public class SurvivalGamesMap {
 	public ChunkGenerator chunkGenerator(MinecraftServer server, SurvivalGamesConfig config, GenerationTracker tracker) {

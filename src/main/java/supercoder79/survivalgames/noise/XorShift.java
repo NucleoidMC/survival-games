@@ -1,8 +1,8 @@
 package supercoder79.survivalgames.noise;
 
 import java.util.Objects;
-import net.minecraft.util.math.random.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import net.minecraft.util.RandomSource;
 
 /**
  * Random number generator for voxel-based fractals based on the XorShift
@@ -124,7 +124,7 @@ public  class XorShift {
 	private final long[] seeds;
 
 	private XorShift(long seed) {
-		Random random = Random.create(seed);
+		RandomSource random = RandomSource.create(seed);
 		seeds = new long[SEED_TABLE_SIZE];
 		for(int i = 0; i < SEED_TABLE_SIZE; i++) {
 			seeds[i] = random.nextLong();

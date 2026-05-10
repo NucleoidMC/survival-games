@@ -1,12 +1,11 @@
 package supercoder79.survivalgames.game;
 
-import net.minecraft.util.math.BlockPos;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import net.minecraft.core.BlockPos;
 
 public final class GenerationTracker {
     private final CopyOnWriteArraySet<BlockPos> redstoneTracked = new CopyOnWriteArraySet<>();

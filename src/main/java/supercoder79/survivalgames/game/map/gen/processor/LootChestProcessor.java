@@ -3,14 +3,14 @@ package supercoder79.survivalgames.game.map.gen.processor;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.structure.StructurePlacementData;
-import net.minecraft.structure.StructureTemplate;
-import net.minecraft.structure.processor.StructureProcessor;
-import net.minecraft.structure.processor.StructureProcessorType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Heightmap;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import supercoder79.survivalgames.game.map.loot.LootHelper;
 import supercoder79.survivalgames.game.map.loot.LootProvider;
 import supercoder79.survivalgames.game.map.loot.LootProviders;
@@ -33,18 +33,18 @@ public class LootChestProcessor extends StructureProcessor {
 	}
 
 	@Override
-	public StructureTemplate.StructureBlockInfo process(WorldView world, BlockPos worldPos, BlockPos localPos, StructureTemplate.StructureBlockInfo localInfo, StructureTemplate.StructureBlockInfo worldInfo, StructurePlacementData structurePlacementData) {
+	public StructureTemplate.StructureBlockInfo processBlock(LevelReader world, BlockPos worldPos, BlockPos localPos, StructureTemplate.StructureBlockInfo localInfo, StructureTemplate.StructureBlockInfo worldInfo, StructurePlaceSettings structurePlacementData) {
 		BlockPos pos = localInfo.pos();
 		if (pos.asLong() == this.chestPos.asLong()) {
 			// TODO: rotation
 
 			if (this.matchTerrain) {
-				int y = world.getTopY(Heightmap.Type.OCEAN_FLOOR_WG, worldInfo.pos().getX(), worldInfo.pos().getZ());
+				int y = world.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, worldInfo.pos().getX(), worldInfo.pos().getZ());
 
 				BlockPos topPos = new BlockPos(worldInfo.pos().getX(), y, worldInfo.pos().getZ());
-				LootHelper.placeProviderChest((WorldAccess) world, topPos, getLootProvider(this.lootType));
+				LootHelper.placeProviderChest((LevelAccessor) world, topPos, getLootProvider(this.lootType));
 			} else {
-				LootHelper.placeProviderChest((WorldAccess) world, worldInfo.pos(), getLootProvider(this.lootType));
+				LootHelper.placeProviderChest((LevelAccessor) world, worldInfo.pos(), getLootProvider(this.lootType));
 			}
 
 			// Place air here

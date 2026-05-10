@@ -1,34 +1,32 @@
 package supercoder79.survivalgames.game.map.biome.alpine;
 
-import net.minecraft.util.math.random.Random;
-
 import kdotjpg.opensimplex.OpenSimplexNoise;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import supercoder79.survivalgames.game.map.biome.BiomeGen;
 import supercoder79.survivalgames.game.map.gen.TaigaTreeGen;
 import xyz.nucleoid.substrate.gen.MapGen;
-
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
 
 public final class AlpsGen implements BiomeGen {
 	public static final AlpsGen INSTANCE = new AlpsGen();
 
 	@Override
-	public BlockState topState(Random random, int x, int z) {
-		return Blocks.STONE.getDefaultState();
+	public BlockState topState(RandomSource random, int x, int z) {
+		return Blocks.STONE.defaultBlockState();
 	}
 
 	@Override
-	public BlockState underState(Random random, int x, int z) {
-		return Blocks.STONE.getDefaultState();
+	public BlockState underState(RandomSource random, int x, int z) {
+		return Blocks.STONE.defaultBlockState();
 	}
 
 	@Override
-	public BlockState underWaterState(Random random, int x, int z) {
-		return Blocks.STONE.getDefaultState();
+	public BlockState underWaterState(RandomSource random, int x, int z) {
+		return Blocks.STONE.defaultBlockState();
 	}
 
 	@Override
@@ -67,7 +65,7 @@ public final class AlpsGen implements BiomeGen {
 	}
 
 	@Override
-	public MapGen tree(int x, int z, Random random) {
+	public MapGen tree(int x, int z, RandomSource random) {
 		return TaigaTreeGen.INSTANCE;
 	}
 
@@ -77,7 +75,7 @@ public final class AlpsGen implements BiomeGen {
 	}
 
 	@Override
-	public RegistryKey<Biome> getFakingBiome() {
-		return BiomeKeys.SNOWY_PLAINS;
+	public ResourceKey<Biome> getFakingBiome() {
+		return Biomes.SNOWY_PLAINS;
 	}
 }

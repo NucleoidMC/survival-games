@@ -1,25 +1,24 @@
 package supercoder79.survivalgames.game.map.biome.nether;
 
 import kdotjpg.opensimplex.OpenSimplexNoise;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import supercoder79.survivalgames.game.map.biome.BiomeGen;
 import supercoder79.survivalgames.game.map.gen.BranchingTreeGen;
 import supercoder79.survivalgames.game.map.gen.LavaHoleGen;
 import xyz.nucleoid.substrate.gen.MapGen;
-
-import net.minecraft.util.math.random.Random;
 
 public class BasaltDeltasGen implements BiomeGen {
     public static final BasaltDeltasGen INSTANCE = new BasaltDeltasGen();
     public static final OpenSimplexNoise BLACKSTONE_NOISE = new OpenSimplexNoise(21);
 
     @Override
-    public RegistryKey<Biome> getFakingBiome() {
-        return BiomeKeys.BASALT_DELTAS;
+    public ResourceKey<Biome> getFakingBiome() {
+        return Biomes.BASALT_DELTAS;
     }
 
     @Override
@@ -58,26 +57,26 @@ public class BasaltDeltasGen implements BiomeGen {
     }
 
     @Override
-    public BlockState topState(Random random, int x, int z) {
+    public BlockState topState(RandomSource random, int x, int z) {
         if (random.nextDouble() <= 0.2 + BLACKSTONE_NOISE.eval(x / 30.0, z / 30.0) * 0.1) {
-            return Blocks.BLACKSTONE.getDefaultState();
+            return Blocks.BLACKSTONE.defaultBlockState();
         }
 
-        return Blocks.BASALT.getDefaultState();
+        return Blocks.BASALT.defaultBlockState();
     }
 
     @Override
-    public BlockState underState(Random random, int x, int z) {
-        return Blocks.BASALT.getDefaultState();
+    public BlockState underState(RandomSource random, int x, int z) {
+        return Blocks.BASALT.defaultBlockState();
     }
 
     @Override
-    public BlockState underWaterState(Random random, int x, int z) {
-        return Blocks.BLACKSTONE.getDefaultState();
+    public BlockState underWaterState(RandomSource random, int x, int z) {
+        return Blocks.BLACKSTONE.defaultBlockState();
     }
 
     @Override
-    public MapGen tree(int x, int z, Random random) {
+    public MapGen tree(int x, int z, RandomSource random) {
         if(random.nextInt(4) == 0) {
             return BranchingTreeGen.BASALT_COLUMN;
         }

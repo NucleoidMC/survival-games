@@ -1,17 +1,14 @@
 package supercoder79.survivalgames.game.map.noise;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.util.math.random.Random;
-
-import com.mojang.serialization.Codec;
 import dev.gegy.noise.sampler.NoiseSampler2d;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import supercoder79.survivalgames.SurvivalGames;
 import supercoder79.survivalgames.game.config.SurvivalGamesConfig;
 import supercoder79.survivalgames.game.map.biome.BiomeGen;
 import supercoder79.survivalgames.game.map.biome.source.FakeBiomeSource;
 import supercoder79.survivalgames.noise.simplex.OpenSimplexNoise;
-
-import net.minecraft.util.math.MathHelper;
 
 public class IslandNoiseGenerator implements NoiseGenerator {
 	public static final MapCodec<IslandNoiseGenerator> CODEC = MapCodec.unit(new IslandNoiseGenerator());
@@ -24,16 +21,16 @@ public class IslandNoiseGenerator implements NoiseGenerator {
 	private double radius;
 
 	@Override
-	public void initialize(Random random, SurvivalGamesConfig config) {
+	public void initialize(RandomSource random, SurvivalGamesConfig config) {
 		this.baseNoise = compile(random, 256.0);
 		this.interpolationNoise = compile(random, 50.0);
 		this.lowerInterpolatedNoise = compile(random,  60.0);
 		this.upperInterpolatedNoise = compile(random,  60.0);
 		this.detailNoise = compile(random, 20.0);
-		this.radius = (config.borderConfig.startSize / 2.0) * 0.75;
+		this.radius = (config.borderConfig().startSize / 2.0) * 0.75;
 	}
 
-	public static NoiseSampler2d compile(Random random, double scale) {
+	public static NoiseSampler2d compile(RandomSource random, double scale) {
 		return SurvivalGames.NOISE_COMPILER.compile(OpenSimplexNoise.create().scale(1 / scale, 1 / scale), NoiseSampler2d.TYPE).create(random.nextLong());
 	}
 
@@ -95,7 +92,7 @@ public class IslandNoiseGenerator implements NoiseGenerator {
 			double lowerNoise = lowerInterpolatedNoise.get(x, z);
 			lowerNoise *= lowerNoise > 0 ? lowerLerpHigh : lowerLerpLow;
 
-			noise += MathHelper.lerp(lerp, lowerNoise, upperNoise);
+			noise += Mth.lerp(lerp, lowerNoise, upperNoise);
 		}
 
 		noise += baseHeight;
@@ -107,7 +104,7 @@ public class IslandNoiseGenerator implements NoiseGenerator {
 		double az = z / this.radius;
 		double rad = ax * ax + az * az;
 
-		noise = MathHelper.clampedLerp(noise, -20, rad / 2.0);
+		noise = Mth.clampedLerp(noise, -20, rad / 2.0);
 
 		return noise;
 	}

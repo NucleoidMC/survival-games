@@ -1,29 +1,27 @@
 package supercoder79.survivalgames.game.map.biome;
 
-import net.minecraft.util.math.random.Random;
-
 import kdotjpg.opensimplex.OpenSimplexNoise;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import supercoder79.survivalgames.game.map.gen.TaigaTreeGen;
 import xyz.nucleoid.substrate.gen.MapGen;
-
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
 
 public final class MountainGen implements BiomeGen {
 	public static final MountainGen INSTANCE = new MountainGen();
 	private static final OpenSimplexNoise STONE_NOISE = new OpenSimplexNoise(80);
 
 	@Override
-	public BlockState topState(Random random, int x, int z) {
-		return STONE_NOISE.eval(x / 45.0, z / 45.0) > 0 ? Blocks.STONE.getDefaultState() : Blocks.GRASS_BLOCK.getDefaultState();
+	public BlockState topState(RandomSource random, int x, int z) {
+		return STONE_NOISE.eval(x / 45.0, z / 45.0) > 0 ? Blocks.STONE.defaultBlockState() : Blocks.GRASS_BLOCK.defaultBlockState();
 	}
 
 	@Override
-	public BlockState underState(Random random, int x, int z) {
-		return STONE_NOISE.eval(x / 45.0, z / 45.0) > 0 ? Blocks.STONE.getDefaultState() : Blocks.DIRT.getDefaultState();
+	public BlockState underState(RandomSource random, int x, int z) {
+		return STONE_NOISE.eval(x / 45.0, z / 45.0) > 0 ? Blocks.STONE.defaultBlockState() : Blocks.DIRT.defaultBlockState();
 	}
 
 	@Override
@@ -67,7 +65,7 @@ public final class MountainGen implements BiomeGen {
 	}
 
 	@Override
-	public MapGen tree(int x, int z, Random random) {
+	public MapGen tree(int x, int z, RandomSource random) {
 		return TaigaTreeGen.INSTANCE;
 	}
 
@@ -77,7 +75,7 @@ public final class MountainGen implements BiomeGen {
 	}
 
 	@Override
-	public RegistryKey<Biome> getFakingBiome() {
-		return BiomeKeys.WINDSWEPT_HILLS;
+	public ResourceKey<Biome> getFakingBiome() {
+		return Biomes.WINDSWEPT_HILLS;
 	}
 }

@@ -2,9 +2,8 @@
 package supercoder79.survivalgames.game.map.biome.blend;
 
 import it.unimi.dsi.fastutil.HashCommon;
-import net.minecraft.util.math.ChunkPos;
-
 import java.util.Arrays;
+import net.minecraft.world.level.ChunkPos;
 
 public final class CachingBlender {
     private final long[] keys;
@@ -40,6 +39,6 @@ public final class CachingBlender {
     }
 
     private static long key(int x, int z) {
-        return ChunkPos.toLong(x, z);
+        return ChunkPos.pack(x, z);
     }
 }

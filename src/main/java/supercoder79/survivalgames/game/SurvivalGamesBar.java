@@ -1,7 +1,7 @@
 package supercoder79.survivalgames.game;
 
-import net.minecraft.entity.boss.BossBar;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.BossEvent;
 import xyz.nucleoid.plasmid.api.game.common.GlobalWidgets;
 import xyz.nucleoid.plasmid.api.game.common.widget.BossBarWidget;
 
@@ -13,31 +13,31 @@ public final class SurvivalGamesBar {
 	}
 
 	public static SurvivalGamesBar create(GlobalWidgets widgets) {
-		return new SurvivalGamesBar(widgets.addBossBar(Text.literal("Worldborder safe! Shrinking in ..."), BossBar.Color.BLUE, BossBar.Style.PROGRESS));
+		return new SurvivalGamesBar(widgets.addBossBar(Component.literal("Worldborder safe! Shrinking in ..."), BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.PROGRESS));
 	}
 
 	public void tickSafe(long ticks, long totalTicks) {
 		String time = formatTime(ticks);
 
-		this.widget.setTitle(Text.literal("Worldborder safe! Shrinking in " + time));
+		this.widget.setTitle(Component.literal("Worldborder safe! Shrinking in " + time));
 		this.widget.setProgress((float) ticks / totalTicks);
 	}
 
 	public void tickActive(long ticks, long totalTicks) {
 		String time = formatTime(ticks);
 
-		this.widget.setTitle(Text.literal("Worldborder shrinking! Finished in " + time));
+		this.widget.setTitle(Component.literal("Worldborder shrinking! Finished in " + time));
 		this.widget.setProgress((float) ticks / totalTicks);
 	}
 
 	public void setFinished() {
-		this.widget.setStyle(BossBar.Color.GREEN, BossBar.Style.PROGRESS);
-		this.widget.setTitle(Text.literal("Worldborder finished. Fight!"));
+		this.widget.setStyle(BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.PROGRESS);
+		this.widget.setTitle(Component.literal("Worldborder finished. Fight!"));
 		this.widget.setProgress(1.0f);
 	}
 
 	public void setActive() {
-		this.widget.setStyle(BossBar.Color.RED, BossBar.Style.PROGRESS);
+		this.widget.setStyle(BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS);
 	}
 
 	private static String formatTime(long ticksUntil) {

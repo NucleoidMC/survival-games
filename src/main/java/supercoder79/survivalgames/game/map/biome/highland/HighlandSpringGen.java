@@ -1,17 +1,16 @@
 package supercoder79.survivalgames.game.map.biome.highland;
 
 import kdotjpg.opensimplex.OpenSimplexNoise;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Identifier;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import supercoder79.survivalgames.game.map.biome.BiomeGen;
 import supercoder79.survivalgames.game.map.gen.SpringGen;
 import xyz.nucleoid.substrate.gen.MapGen;
-
-import net.minecraft.util.math.random.Random;
 
 public class HighlandSpringGen implements BiomeGen {
     public static final BiomeGen INSTANCE = new HighlandSpringGen();
@@ -19,8 +18,8 @@ public class HighlandSpringGen implements BiomeGen {
     public static OpenSimplexNoise GRASS_NOISE = new OpenSimplexNoise(26);
 
     @Override
-    public RegistryKey<Biome> getFakingBiome() {
-        return RegistryKey.of(RegistryKeys.BIOME, Identifier.of("survivalgames", "highland"));
+    public ResourceKey<Biome> getFakingBiome() {
+        return ResourceKey.create(Registries.BIOME, Identifier.fromNamespaceAndPath("survivalgames", "highland"));
     }
 
     @Override
@@ -64,27 +63,27 @@ public class HighlandSpringGen implements BiomeGen {
     }
 
     @Override
-    public BlockState topState(Random random, int x, int z) {
+    public BlockState topState(RandomSource random, int x, int z) {
         if (random.nextDouble() < GRANITE_NOISE.eval(x / 45.0, z / 45.0) + 0.1) {
-            return Blocks.GRANITE.getDefaultState();
+            return Blocks.GRANITE.defaultBlockState();
         } else if (random.nextDouble() < GRASS_NOISE.eval(x / 45.0, z / 45.0)) {
-            return Blocks.GRASS_BLOCK.getDefaultState();
+            return Blocks.GRASS_BLOCK.defaultBlockState();
         }
-        return random.nextDouble() < 0.5 ? Blocks.ANDESITE.getDefaultState() : Blocks.STONE.getDefaultState();
+        return random.nextDouble() < 0.5 ? Blocks.ANDESITE.defaultBlockState() : Blocks.STONE.defaultBlockState();
     }
 
     @Override
-    public BlockState underState(Random random, int x, int z) {
+    public BlockState underState(RandomSource random, int x, int z) {
         return BiomeGen.super.underState(random, x, z);
     }
 
     @Override
-    public BlockState underWaterState(Random random, int x, int z) {
+    public BlockState underWaterState(RandomSource random, int x, int z) {
         return BiomeGen.super.underWaterState(random, x, z);
     }
 
     @Override
-    public MapGen tree(int x, int z, Random random) {
+    public MapGen tree(int x, int z, RandomSource random) {
         return SpringGen.INSTANCE;
     }
 
@@ -94,12 +93,12 @@ public class HighlandSpringGen implements BiomeGen {
     }
 
     @Override
-    public int grassChance(int x, int z, Random random) {
+    public int grassChance(int x, int z, RandomSource random) {
         return 64;
     }
 
     @Override
-    public MapGen grass(int x, int z, Random random) {
+    public MapGen grass(int x, int z, RandomSource random) {
         return BiomeGen.super.grass(x, z, random);
     }
 }

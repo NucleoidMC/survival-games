@@ -1,17 +1,15 @@
 package supercoder79.survivalgames.game.map.biome.nether;
 
-import net.minecraft.util.math.random.Random;
-
 import kdotjpg.opensimplex.OpenSimplexNoise;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import supercoder79.survivalgames.game.map.biome.BiomeGen;
 import supercoder79.survivalgames.game.map.gen.BranchingTreeGen;
 import xyz.nucleoid.substrate.gen.MapGen;
-
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
 
 public final class WarpedForestGen implements BiomeGen {
     public static final WarpedForestGen INSTANCE = new WarpedForestGen();
@@ -19,19 +17,19 @@ public final class WarpedForestGen implements BiomeGen {
     public static final OpenSimplexNoise LIGHT_NOISE = new OpenSimplexNoise(12);
 
     @Override
-    public BlockState topState(Random random, int x, int z) {
+    public BlockState topState(RandomSource random, int x, int z) {
         if (random.nextDouble() <= 0.1 + WART_NOISE.eval(x / 30.0, z / 30.0) * 0.1) {
-            return Blocks.WARPED_WART_BLOCK.getDefaultState();
+            return Blocks.WARPED_WART_BLOCK.defaultBlockState();
         }
         if (random.nextDouble() <= 0.05 + LIGHT_NOISE.eval(x / 30.0, z / 30.0) * 0.1) {
-            return Blocks.SHROOMLIGHT.getDefaultState();
+            return Blocks.SHROOMLIGHT.defaultBlockState();
         }
-        return Blocks.WARPED_NYLIUM.getDefaultState();
+        return Blocks.WARPED_NYLIUM.defaultBlockState();
     }
 
     @Override
-    public BlockState underState(Random random, int x, int z) {
-        return Blocks.NETHERRACK.getDefaultState();
+    public BlockState underState(RandomSource random, int x, int z) {
+        return Blocks.NETHERRACK.defaultBlockState();
     }
 
     @Override
@@ -70,7 +68,7 @@ public final class WarpedForestGen implements BiomeGen {
     }
 
     @Override
-    public MapGen tree(int x, int z, Random random) {
+    public MapGen tree(int x, int z, RandomSource random) {
         return BranchingTreeGen.WARPED;
     }
 
@@ -80,12 +78,12 @@ public final class WarpedForestGen implements BiomeGen {
     }
 
     @Override
-    public RegistryKey<Biome> getFakingBiome() {
-        return BiomeKeys.WARPED_FOREST;
+    public ResourceKey<Biome> getFakingBiome() {
+        return Biomes.WARPED_FOREST;
     }
 
     @Override
-    public int grassChance(int x, int z, Random random) {
+    public int grassChance(int x, int z, RandomSource random) {
         return 4;
     }
 }

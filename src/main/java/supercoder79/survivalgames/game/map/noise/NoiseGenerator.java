@@ -1,8 +1,7 @@
 package supercoder79.survivalgames.game.map.noise;
 
-import net.minecraft.util.math.random.Random;
 import java.util.function.Function;
-
+import net.minecraft.util.RandomSource;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import supercoder79.survivalgames.game.config.SurvivalGamesConfig;
@@ -13,7 +12,7 @@ public interface NoiseGenerator {
 	TinyRegistry<MapCodec<? extends NoiseGenerator>> REGISTRY = TinyRegistry.create();
 	MapCodec<NoiseGenerator> CODEC = REGISTRY.dispatchMap(NoiseGenerator::getCodec, Function.identity());
 
-	void initialize(Random random, SurvivalGamesConfig config);
+	void initialize(RandomSource random, SurvivalGamesConfig config);
 
 	double getHeightAt(FakeBiomeSource biomeSource, int x, int z);
 

@@ -1,19 +1,18 @@
 package supercoder79.survivalgames.game.map.gen;
 
-import net.minecraft.block.Blocks;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ServerWorldAccess;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Blocks;
 import xyz.nucleoid.substrate.gen.MapGen;
-
-import net.minecraft.util.math.random.Random;
 
 public class LavaHoleGen implements MapGen {
     public static final LavaHoleGen INSTANCE = new LavaHoleGen();
 
     @Override
-    public void generate(ServerWorldAccess world, BlockPos pos, Random random) {
-        world.setBlockState(pos, Blocks.AIR.getDefaultState(), 0);
-        world.setBlockState(pos.down(), Blocks.AIR.getDefaultState(), 0);
-        world.setBlockState(pos.down(2), Blocks.LAVA.getDefaultState(), 0);
+    public void generate(ServerLevelAccessor world, BlockPos pos, RandomSource random) {
+        world.setBlock(pos, Blocks.AIR.defaultBlockState(), 0);
+        world.setBlock(pos.below(), Blocks.AIR.defaultBlockState(), 0);
+        world.setBlock(pos.below(2), Blocks.LAVA.defaultBlockState(), 0);
     }
 }

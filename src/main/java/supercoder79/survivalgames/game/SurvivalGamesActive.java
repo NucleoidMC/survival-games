@@ -1,29 +1,5 @@
 package supercoder79.survivalgames.game;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.ai.TargetPredicate;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.item.Items;
-import net.minecraft.network.packet.s2c.play.WorldBorderInitializeS2CPacket;
-import net.minecraft.network.packet.s2c.play.WorldBorderInterpolateSizeS2CPacket;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.GameMode;
 import supercoder79.survivalgames.SurvivalGames;
 import supercoder79.survivalgames.game.config.SurvivalGamesConfig;
 import supercoder79.survivalgames.game.logic.ActiveLogic;
@@ -45,9 +21,31 @@ import xyz.nucleoid.stimuli.event.entity.EntityDeathEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket;
+import net.minecraft.network.protocol.game.ClientboundSetBorderLerpSizePacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.Containers;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
 public final class SurvivalGamesActive {
     private final GameSpace space;
@@ -62,11 +60,11 @@ public final class SurvivalGamesActive {
     private boolean borderShrinkStarted = false;
     private long gameCloseTick = Long.MAX_VALUE;
     private boolean finished = false;
-    private final ServerWorld world;
+    private final ServerLevel world;
     private final GenerationTracker tracker;
     private final Set<ActiveLogic> logics = new HashSet<>();
 
-    private SurvivalGamesActive(GameSpace space, SurvivalGamesMap map, SurvivalGamesConfig config, GlobalWidgets widgets, ServerWorld world, GenerationTracker tracker) {
+    private SurvivalGamesActive(GameSpace space, SurvivalGamesMap map, SurvivalGamesConfig config, GlobalWidgets widgets, ServerLevel world, GenerationTracker tracker) {
         this.space = space;
         this.map = map;
         this.config = config;
@@ -77,7 +75,7 @@ public final class SurvivalGamesActive {
         this.bar = SurvivalGamesBar.create(widgets);
     }
 
-    public static void open(GameSpace space, SurvivalGamesMap map, SurvivalGamesConfig config, ServerWorld world, GenerationTracker tracker) {
+    public static void open(GameSpace space, SurvivalGamesMap map, SurvivalGamesConfig config, ServerLevel world, GenerationTracker tracker) {
         space.setActivity(game -> {
             GlobalWidgets widgets = GlobalWidgets.addTo(game);
             SurvivalGamesActive active = new SurvivalGamesActive(space, map, config, widgets, world, tracker);
@@ -115,48 +113,48 @@ public final class SurvivalGamesActive {
     private void open() {
         // World border stuff
         world.getWorldBorder().setCenter(0, 0);
-        world.getWorldBorder().setSize(config.borderConfig.startSize);
+        world.getWorldBorder().setSize(config.borderConfig().startSize);
         world.getWorldBorder().setDamagePerBlock(0.5);
         startTime = space.getTime();
 
         int index = 0;
 
-        Random random = Random.create();
+        RandomSource random = RandomSource.create();
 
-        double radius = (config.borderConfig.startSize / 2.0);
+        double radius = (config.borderConfig().startSize / 2.0);
 
-        double maxSpawnDistance = radius * this.config.noiseGenerator.maxSpawnDistFactor();
-        double minSpawnDistance = radius * this.config.noiseGenerator.minSpawnDistFactor();
+        double maxSpawnDistance = radius * this.config.noiseGenerator().maxSpawnDistFactor();
+        double minSpawnDistance = radius * this.config.noiseGenerator().minSpawnDistFactor();
 
-        for (ServerPlayerEntity player : this.space.getPlayers().participants()) {
-            player.networkHandler.sendPacket(new WorldBorderInitializeS2CPacket(world.getWorldBorder()));
+        for (ServerPlayer player : this.space.getPlayers().participants()) {
+            player.connection.send(new ClientboundInitializeBorderPacket(world.getWorldBorder()));
 
             double theta = ((double) index++ / this.space.getPlayers().participants().size()) * 2 * Math.PI;
 
-            int spawnDistance = (int) MathHelper.lerp(random.nextDouble(), minSpawnDistance, maxSpawnDistance);
+            int spawnDistance = (int) Mth.lerp(random.nextDouble(), minSpawnDistance, maxSpawnDistance);
 
-            int x = MathHelper.floor(Math.cos(theta) * spawnDistance);
-            int z = MathHelper.floor(Math.sin(theta) * spawnDistance);
+            int x = Mth.floor(Math.cos(theta) * spawnDistance);
+            int z = Mth.floor(Math.sin(theta) * spawnDistance);
 
-            this.spawnLogic.resetPlayer(player, GameMode.SURVIVAL);
-            this.spawnLogic.spawnPlayerAt(player, x, z, player.getWorld());
+            this.spawnLogic.resetPlayer(player, GameType.SURVIVAL);
+            this.spawnLogic.spawnPlayerAt(player, x, z, player.level());
 
-            for (ItemStack stack : config.kit) {
-                player.getInventory().insertStack(stack.copy());
+            for (var stack : config.kit()) {
+                player.getInventory().add(stack.create());
             }
         }
     }
 
     private void close(GameCloseReason gameCloseReason) {
         // this should hopefully fix players returning as survival mode to the lobby
-        for (ServerPlayerEntity player : this.space.getPlayers().participants()) {
-            player.changeGameMode(GameMode.SURVIVAL);
+        for (ServerPlayer player : this.space.getPlayers().participants()) {
+            player.setGameMode(GameType.SURVIVAL);
         }
     }
 
-    private void addPlayer(ServerPlayerEntity player, ServerWorld world) {
+    private void addPlayer(ServerPlayer player, ServerLevel world) {
         if (!this.space.getPlayers().participants().contains(PlayerRef.of(player))) {
-            player.networkHandler.sendPacket(new WorldBorderInitializeS2CPacket(player.getWorld().getWorldBorder()));
+            player.connection.send(new ClientboundInitializeBorderPacket(player.level().getWorldBorder()));
             this.spawnSpectator(player, world);
         }
     }
@@ -165,26 +163,26 @@ public final class SurvivalGamesActive {
         long time = this.space.getTime();
 
         if (!this.borderShrinkStarted) {
-            long totalSafeTime = config.borderConfig.safeSecs * 20L;
+            long totalSafeTime = config.borderConfig().safeSecs * 20L;
             this.bar.tickSafe(totalSafeTime - (time - startTime), totalSafeTime);
 
             if ((time - startTime) > totalSafeTime) {
                 this.bar.setActive();
                 this.borderShrinkStarted = true;
                 this.shrinkStartTime = time;
-                this.space.getPlayers().participants().sendMessage(Text.literal("The worldborder has started shrinking!").formatted(Formatting.RED));
+                this.space.getPlayers().participants().sendMessage(Component.literal("The worldborder has started shrinking!").withStyle(ChatFormatting.RED));
 
-                world.getWorldBorder().interpolateSize(config.borderConfig.startSize, config.borderConfig.endSize, 1000L * config.borderConfig.shrinkSecs);
-                for (ServerPlayerEntity player : this.space.getPlayers().participants()) {
-                    player.networkHandler.sendPacket(new WorldBorderInterpolateSizeS2CPacket(world.getWorldBorder()));
+                world.getWorldBorder().lerpSizeBetween(config.borderConfig().startSize, config.borderConfig().endSize, 20 * config.borderConfig().shrinkSecs, world.getGameTime());
+                for (ServerPlayer player : this.space.getPlayers().participants()) {
+                    player.connection.send(new ClientboundSetBorderLerpSizePacket(world.getWorldBorder()));
                 }
             }
         } else {
-            long totalShrinkTime = config.borderConfig.shrinkSecs * 20L;
+            long totalShrinkTime = config.borderConfig().shrinkSecs * 20L;
 
-            if ((time - shrinkStartTime) > totalShrinkTime || world.getWorldBorder().getSize() == this.config.borderConfig.endSize) {
+            if ((time - shrinkStartTime) > totalShrinkTime || world.getWorldBorder().getSize() == this.config.borderConfig().endSize) {
                 if (!this.finished) {
-                    this.space.getPlayers().participants().sendMessage(Text.literal("Last one standing wins!").formatted(Formatting.BLUE));
+                    this.space.getPlayers().participants().sendMessage(Component.literal("Last one standing wins!").withStyle(ChatFormatting.BLUE));
                     world.getWorldBorder().setDamagePerBlock(2.5);
                     world.getWorldBorder().setSafeZone(0.125);
                     this.bar.setFinished();
@@ -210,17 +208,17 @@ public final class SurvivalGamesActive {
     }
 
     private boolean tickMobSpawners(BlockPos pos) {
-        if (this.world.isReceivingRedstonePower(pos)) {
+        if (this.world.hasNeighborSignal(pos)) {
             addLogic(new SpawnerLogic(this, pos));
-            TargetPredicate pred = TargetPredicate.DEFAULT;
-            pred.setPredicate((p, w) -> p instanceof ServerPlayerEntity player && this.space.getPlayers().participants().contains(player) && player.interactionManager.isSurvivalLike());
+            TargetingConditions pred = TargetingConditions.DEFAULT;
+            pred.selector((p, w) -> p instanceof ServerPlayer player && this.space.getPlayers().participants().contains(player) && player.gameMode.isSurvival());
 
-            PlayerEntity player = this.world.getClosestPlayer(pred, pos.getX(), pos.getY(), pos.getZ());
+            Player player = this.world.getNearestPlayer(pred, pos.getX(), pos.getY(), pos.getZ());
 
             if (player != null) {
-                this.space.getPlayers().participants().sendMessage(Text.literal(player.getNameForScoreboard() + " triggered a spawner!").formatted(Formatting.GOLD));
+                this.space.getPlayers().participants().sendMessage(Component.literal(player.getScoreboardName() + " triggered a spawner!").withStyle(ChatFormatting.GOLD));
             } else {
-                this.space.getPlayers().participants().sendMessage(Text.literal("A spawner has been triggered!").formatted(Formatting.GOLD));
+                this.space.getPlayers().participants().sendMessage(Component.literal("A spawner has been triggered!").withStyle(ChatFormatting.GOLD));
             }
 
             return true;
@@ -228,7 +226,7 @@ public final class SurvivalGamesActive {
         return false;
     }
 
-    private EventResult onPlayerDeath(ServerPlayerEntity player, DamageSource source) {
+    private EventResult onPlayerDeath(ServerPlayer player, DamageSource source) {
         this.eliminatePlayer(player);
         return EventResult.DENY;
     }
@@ -245,51 +243,51 @@ public final class SurvivalGamesActive {
         return EventResult.PASS;
     }
 
-    private void eliminatePlayer(ServerPlayerEntity player) {
-        Text message = player.getDisplayName().copy().append(" has been eliminated!")
-                .formatted(Formatting.RED);
+    private void eliminatePlayer(ServerPlayer player) {
+        Component message = player.getDisplayName().copy().append(" has been eliminated!")
+                .withStyle(ChatFormatting.RED);
 
         PlayerSet players = this.space.getPlayers();
         players.sendMessage(message);
-        players.forEach(p -> p.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1));
+        players.forEach(p -> p.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 1, 1));
 
-        ItemScatterer.spawn(player.getWorld(), player.getBlockPos(), player.getInventory());
+        Containers.dropContents(player.level(), player.blockPosition(), player.getInventory());
 
-        this.spawnLogic.resetPlayer(player, GameMode.SPECTATOR);
+        this.spawnLogic.resetPlayer(player, GameType.SPECTATOR);
 
         int survival = 0;
-        for (ServerPlayerEntity participant : this.space.getPlayers().participants()) {
-            if (participant.interactionManager.isSurvivalLike()) {
+        for (ServerPlayer participant : this.space.getPlayers().participants()) {
+            if (participant.gameMode.isSurvival()) {
                 survival++;
             }
         }
 
         if (survival == 1) {
-            for (ServerPlayerEntity participant : this.space.getPlayers().participants()) {
-                if (participant.interactionManager.isSurvivalLike()) {
-                    this.endGame(Text.literal(participant.getNameForScoreboard() + " won!").formatted(Formatting.GOLD));
+            for (ServerPlayer participant : this.space.getPlayers().participants()) {
+                if (participant.gameMode.isSurvival()) {
+                    this.endGame(Component.literal(participant.getScoreboardName() + " won!").withStyle(ChatFormatting.GOLD));
                     break;
                 }
             }
         } else if (survival == 0) {
-            this.endGame(Text.literal("Nobody won!").formatted(Formatting.GOLD));
+            this.endGame(Component.literal("Nobody won!").withStyle(ChatFormatting.GOLD));
         }
     }
 
-    private void spawnSpectator(ServerPlayerEntity player, ServerWorld world) {
-        this.spawnLogic.resetPlayer(player, GameMode.SPECTATOR);
+    private void spawnSpectator(ServerPlayer player, ServerLevel world) {
+        this.spawnLogic.resetPlayer(player, GameType.SPECTATOR);
         this.spawnLogic.spawnPlayerAtCenter(player, world);
     }
 
-    private void endGame(Text message) {
+    private void endGame(Component message) {
         this.space.getPlayers().sendMessage(message);
         this.gameCloseTick = this.space.getTime() + (20 * 10);
     }
 
-    private EventResult onBreakBlock(ServerPlayerEntity player, ServerWorld world, BlockPos pos) {
+    private EventResult onBreakBlock(ServerPlayer player, ServerLevel world, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
 
-        if (state.isIn(BlockTags.LOGS) && !player.isSneaking()) {
+        if (state.is(BlockTags.LOGS) && !player.isShiftKeyDown()) {
             Set<BlockPos> logs = new HashSet<>();
             logs.add(pos);
 
@@ -297,55 +295,55 @@ public final class SurvivalGamesActive {
 
             for (BlockPos log : logs) {
                 BlockState logState = world.getBlockState(log);
-                world.breakBlock(log, false);
+                world.destroyBlock(log, false);
 
-                world.spawnEntity(new ItemEntity(world, log.getX(), log.getY(), log.getZ(), new ItemStack(logState.getBlock())));
+                world.addFreshEntity(new ItemEntity(world, log.getX(), log.getY(), log.getZ(), new ItemStack(logState.getBlock())));
             }
 
             return EventResult.DENY;
         }
 
-        if (state.isOf(Blocks.SPAWNER)) {
+        if (state.is(Blocks.SPAWNER)) {
             return EventResult.DENY;
         }
 
-        if (state.isOf(Blocks.IRON_ORE)) {
-            world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Items.IRON_INGOT)));
-            world.breakBlock(pos, false);
-
-            return EventResult.DENY;
-        }
-
-        if (state.isOf(Blocks.RAW_IRON_BLOCK)) {
-            world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Items.IRON_INGOT, 9)));
-            world.breakBlock(pos, false);
+        if (state.is(Blocks.IRON_ORE)) {
+            world.addFreshEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Items.IRON_INGOT)));
+            world.destroyBlock(pos, false);
 
             return EventResult.DENY;
         }
 
-        if (state.isOf(Blocks.COAL_ORE)) {
-            world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Items.COAL)));
-            world.breakBlock(pos, false);
+        if (state.is(Blocks.RAW_IRON_BLOCK)) {
+            world.addFreshEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Items.IRON_INGOT, 9)));
+            world.destroyBlock(pos, false);
 
             return EventResult.DENY;
         }
 
-        if (state.isOf(Blocks.ENCHANTING_TABLE)) {
+        if (state.is(Blocks.COAL_ORE)) {
+            world.addFreshEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Items.COAL)));
+            world.destroyBlock(pos, false);
+
+            return EventResult.DENY;
+        }
+
+        if (state.is(Blocks.ENCHANTING_TABLE)) {
             return EventResult.DENY;
         }
 
         return EventResult.PASS;
     }
 
-    private void findLogs(ServerWorld world, BlockPos pos, Set<BlockPos> logs) {
+    private void findLogs(ServerLevel world, BlockPos pos, Set<BlockPos> logs) {
         for (int x = -1; x <= 1; x++) {
             for (int z = -1; z <= 1; z++) {
                 for (int y = -1; y <= 1; y++) {
-                    BlockPos local = pos.add(x, y, z);
+                    BlockPos local = pos.offset(x, y, z);
                     BlockState state = world.getBlockState(local);
 
                     if (!logs.contains(local)) {
-                        if (state.isIn(BlockTags.LOGS)) {
+                        if (state.is(BlockTags.LOGS)) {
                             logs.add(local);
                             findLogs(world, local, logs);
                         }
@@ -355,7 +353,7 @@ public final class SurvivalGamesActive {
         }
     }
 
-    private EventResult onUseBlock(ServerPlayerEntity playerEntity, ServerWorld world, BlockPos pos, BlockState state, ItemUsageContext itemUsageContext) {
+    private EventResult onUseBlock(ServerPlayer playerEntity, ServerLevel world, BlockPos pos, BlockState state, UseOnContext itemUsageContext) {
         if (pos.getY() >= 100) {
             return EventResult.DENY;
         }
@@ -363,7 +361,7 @@ public final class SurvivalGamesActive {
         return EventResult.PASS;
     }
 
-    public ServerWorld getWorld() {
+    public ServerLevel getWorld() {
         return world;
     }
 

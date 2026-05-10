@@ -1,18 +1,17 @@
 package supercoder79.survivalgames.game;
 
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.GameMode;
-import net.minecraft.world.Heightmap;
-import net.minecraft.world.chunk.WorldChunk;
 import org.apache.logging.log4j.core.jmx.Server;
 import supercoder79.survivalgames.game.config.SurvivalGamesConfig;
 import xyz.nucleoid.plasmid.api.game.GameSpace;
 
 import java.util.Set;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.levelgen.Heightmap;
 
 public final class SurvivalGamesSpawnLogic {
     private final GameSpace world;
@@ -23,29 +22,29 @@ public final class SurvivalGamesSpawnLogic {
         this.config = config;
     }
 
-    public void resetPlayer(ServerPlayerEntity player, GameMode gameMode) {
-        player.getInventory().clear();
-        player.getEnderChestInventory().clear();
-        player.clearStatusEffects();
+    public void resetPlayer(ServerPlayer player, GameType gameMode) {
+        player.getInventory().clearContent();
+        player.getEnderChestInventory().clearContent();
+        player.removeAllEffects();
         player.setHealth(20.0F);
-        player.getHungerManager().setFoodLevel(20);
+        player.getFoodData().setFoodLevel(20);
         player.fallDistance = 0.0F;
-        player.changeGameMode(gameMode);
-        player.setExperienceLevel(0);
+        player.setGameMode(gameMode);
+        player.setExperienceLevels(0);
         player.setExperiencePoints(0);
     }
 
-    public void spawnPlayerAtCenter(ServerPlayerEntity player, ServerWorld world) {
+    public void spawnPlayerAtCenter(ServerPlayer player, ServerLevel world) {
         this.spawnPlayerAt(player, 0, 0, world);
     }
 
-    public void spawnPlayerAt(ServerPlayerEntity player, int x, int z, ServerWorld world) {
+    public void spawnPlayerAt(ServerPlayer player, int x, int z, ServerLevel world) {
 
         ChunkPos chunkPos = new ChunkPos(x >> 4, z >> 4);
-        WorldChunk chunk = world.getChunk(chunkPos.x, chunkPos.z);
-        BlockPos pos = new BlockPos(x, chunk.sampleHeightmap(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z) + 1, z);
+        LevelChunk chunk = world.getChunk(chunkPos.x(), chunkPos.z());
+        BlockPos pos = new BlockPos(x, chunk.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) + 1, z);
 
-        if (!chunk.getBlockState(pos.down()).getFluidState().isEmpty()) {
+        if (!chunk.getBlockState(pos.below()).getFluidState().isEmpty()) {
             boolean found = false;
 
             // Try 20 times to spiral outwards, hopefully not hitting fluid
@@ -63,11 +62,11 @@ public final class SurvivalGamesSpawnLogic {
                     int az = (int) (Math.sin(theta) * dist) + z;
 
                     ChunkPos circlePos = new ChunkPos(ax >> 4, az >> 4);
-                    WorldChunk circleChunk = world.getChunk(circlePos.x, circlePos.z);
-                    pos = new BlockPos(ax, circleChunk.sampleHeightmap(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, ax, az) + 1, az);
+                    LevelChunk circleChunk = world.getChunk(circlePos.x(), circlePos.z());
+                    pos = new BlockPos(ax, circleChunk.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ax, az) + 1, az);
 
                     // Check the position at the circle
-                    if (chunk.getBlockState(pos.down()).getFluidState().isEmpty()) {
+                    if (chunk.getBlockState(pos.below()).getFluidState().isEmpty()) {
                         found = true;
                         break;
                     }
@@ -75,6 +74,6 @@ public final class SurvivalGamesSpawnLogic {
             }
         }
 
-        player.teleport(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, Set.of(), 0.0F, 0.0F, true);
+        player.teleportTo(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, Set.of(), 0.0F, 0.0F, true);
     }
 }
