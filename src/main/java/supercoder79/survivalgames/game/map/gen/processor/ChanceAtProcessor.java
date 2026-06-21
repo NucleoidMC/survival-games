@@ -12,8 +12,9 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import org.jspecify.annotations.Nullable;
 
-public class ChanceAtProcessor extends StructureProcessor {
+public class ChanceAtProcessor implements StructureProcessor {
 	public static MapCodec<ChanceAtProcessor> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 			BlockPos.CODEC.fieldOf("pos").forGetter(p -> p.pos),
 			BlockState.CODEC.fieldOf("state").forGetter(p -> p.state),
@@ -34,15 +35,15 @@ public class ChanceAtProcessor extends StructureProcessor {
 	}
 
 	@Override
-	public StructureTemplate.StructureBlockInfo processBlock(LevelReader world, BlockPos worldPos, BlockPos localPos, StructureTemplate.StructureBlockInfo localInfo, StructureTemplate.StructureBlockInfo worldInfo, StructurePlaceSettings structurePlacementData) {
-		if (structurePlacementData.getRandom(worldInfo.pos()).nextDouble() < this.chance) {
-			if (localInfo.pos().asLong() == this.pos.asLong()) {
+	public StructureTemplate.@Nullable StructureBlockInfo processBlock(LevelReader world, BlockPos targetPosition, BlockPos referencePos, BlockPos templateRelativePos, StructureTemplate.StructureBlockInfo worldInfo, StructurePlaceSettings settings) {
+		if (settings.getRandom(worldInfo.pos()).nextDouble() < this.chance) {
+			if (templateRelativePos.asLong() == this.pos.asLong()) {
 
 				BlockState state = this.state;
 				if (state.hasProperty(BlockStateProperties.FACING)) {
-					state = state.setValue(BlockStateProperties.FACING, structurePlacementData.getRotation().rotate(state.getValue(BlockStateProperties.FACING)));
+					state = state.setValue(BlockStateProperties.FACING, settings.getRotation().rotate(state.getValue(BlockStateProperties.FACING)));
 				} else if (state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
-					state = state.setValue(BlockStateProperties.HORIZONTAL_FACING, structurePlacementData.getRotation().rotate(state.getValue(BlockStateProperties.HORIZONTAL_FACING)));
+					state = state.setValue(BlockStateProperties.HORIZONTAL_FACING, settings.getRotation().rotate(state.getValue(BlockStateProperties.HORIZONTAL_FACING)));
 				}
 
 				if (this.matchTerrain) {
@@ -60,7 +61,7 @@ public class ChanceAtProcessor extends StructureProcessor {
 	}
 
 	@Override
-	protected StructureProcessorType<?> getType() {
-		return SurvivalGamesProcessorTypes.CHANCE_AT;
+	public MapCodec<? extends StructureProcessor> codec() {
+		return CODEC;
 	}
 }

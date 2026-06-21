@@ -20,11 +20,11 @@ public final class MesaPlateauGen implements BiomeGen {
 	@Override
 	public BlockState topState(RandomSource random, int x, int z) {
 		if (random.nextDouble() <= 0.1 + RED_NOISE.eval(x / 30.0, z / 30.0) * 1.5) {
-            return Blocks.RED_TERRACOTTA.defaultBlockState();
+            return Blocks.DYED_TERRACOTTA.red().defaultBlockState();
         }
 
         if (random.nextDouble() <= 0.1 + ORANGE_NOISE.eval(x / 45.0, z / 45.0) * 1.5) {
-            return Blocks.ORANGE_TERRACOTTA.defaultBlockState();
+            return Blocks.DYED_TERRACOTTA.orange().defaultBlockState();
         }
 
 		if (random.nextDouble() <= 0.1 + GRASS_NOISE.eval(x / 30.0, z / 30.0) * 0.1) {
@@ -36,7 +36,7 @@ public final class MesaPlateauGen implements BiomeGen {
 
 	@Override
 	public BlockState underState(RandomSource random, int x, int z) {
-		return RED_NOISE.eval(x / 45.0, z / 45.0) > 0 ? Blocks.RED_TERRACOTTA.defaultBlockState() : Blocks.TERRACOTTA.defaultBlockState();
+		return RED_NOISE.eval(x / 45.0, z / 45.0) > 0 ? Blocks.DYED_TERRACOTTA.red().defaultBlockState() : Blocks.TERRACOTTA.defaultBlockState();
 	}
 
 	@Override

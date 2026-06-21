@@ -11,11 +11,12 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import org.jspecify.annotations.Nullable;
 import supercoder79.survivalgames.game.map.loot.LootHelper;
 import supercoder79.survivalgames.game.map.loot.LootProvider;
 import supercoder79.survivalgames.game.map.loot.LootProviders;
 
-public class LootChestProcessor extends StructureProcessor {
+public class LootChestProcessor implements StructureProcessor {
 	public static MapCodec<LootChestProcessor> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 			BlockPos.CODEC.fieldOf("pos").forGetter(p -> p.chestPos),
 			Codec.BOOL.fieldOf("match_terrain").orElse(false).forGetter(p -> p.matchTerrain),
@@ -33,18 +34,18 @@ public class LootChestProcessor extends StructureProcessor {
 	}
 
 	@Override
-	public StructureTemplate.StructureBlockInfo processBlock(LevelReader world, BlockPos worldPos, BlockPos localPos, StructureTemplate.StructureBlockInfo localInfo, StructureTemplate.StructureBlockInfo worldInfo, StructurePlaceSettings structurePlacementData) {
-		BlockPos pos = localInfo.pos();
+	public StructureTemplate.@Nullable StructureBlockInfo processBlock(LevelReader level, BlockPos targetPosition, BlockPos referencePos, BlockPos templateRelativePos, StructureTemplate.StructureBlockInfo processedBlock, StructurePlaceSettings settings) {
+		BlockPos pos = processedBlock.pos();
 		if (pos.asLong() == this.chestPos.asLong()) {
 			// TODO: rotation
 
 			if (this.matchTerrain) {
-				int y = world.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, worldInfo.pos().getX(), worldInfo.pos().getZ());
+				int y = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, targetPosition.getX(), targetPosition.getZ());
 
-				BlockPos topPos = new BlockPos(worldInfo.pos().getX(), y, worldInfo.pos().getZ());
-				LootHelper.placeProviderChest((LevelAccessor) world, topPos, getLootProvider(this.lootType));
+				BlockPos topPos = new BlockPos(targetPosition.getX(), y, targetPosition.getZ());
+				LootHelper.placeProviderChest((LevelAccessor) level, topPos, getLootProvider(this.lootType));
 			} else {
-				LootHelper.placeProviderChest((LevelAccessor) world, worldInfo.pos(), getLootProvider(this.lootType));
+				LootHelper.placeProviderChest((LevelAccessor) level, targetPosition, getLootProvider(this.lootType));
 			}
 
 			// Place air here
@@ -52,7 +53,12 @@ public class LootChestProcessor extends StructureProcessor {
 		}
 
 
-		return worldInfo;
+		return processedBlock;
+	}
+
+	@Override
+	public MapCodec<? extends StructureProcessor> codec() {
+		return CODEC;
 	}
 
 	// TODO: loot provider registry
@@ -64,10 +70,5 @@ public class LootChestProcessor extends StructureProcessor {
 			case "ore_pile" -> LootProviders.ORE_PILE;
 			default -> LootProviders.GENERIC;
 		};
-	}
-
-	@Override
-	protected StructureProcessorType<?> getType() {
-		return SurvivalGamesProcessorTypes.LOOT;
 	}
 }

@@ -17,6 +17,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
@@ -374,7 +375,7 @@ public class SurvivalGamesChunkGenerator extends GameChunkGenerator {
 
 				if (world.getBlockState(local).is(Blocks.WATER)) {
 					placed++;
-					Boat boat = EntityType.OAK_BOAT.create(world.getLevel(), EntitySpawnReason.CHUNK_GENERATION);
+					Boat boat = EntityTypes.OAK_BOAT.create(world.getLevel(), EntitySpawnReason.CHUNK_GENERATION);
 					boat.setPosRaw(local.getX(), local.getY() + 1, local.getZ());
 					world.addFreshEntity(boat);
 

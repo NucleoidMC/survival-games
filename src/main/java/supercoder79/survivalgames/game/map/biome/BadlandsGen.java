@@ -28,7 +28,7 @@ public class BadlandsGen implements BiomeGen {
         }
 
         if (random.nextDouble() <= 0.1 + RED_TERRACOTTA_NOISE.eval(x / 30.0, z / 30.0) * 0.1) {
-            return Blocks.RED_TERRACOTTA.defaultBlockState();
+            return Blocks.DYED_TERRACOTTA.red().defaultBlockState();
         }
 
         return Blocks.RED_SAND.defaultBlockState();
@@ -37,7 +37,7 @@ public class BadlandsGen implements BiomeGen {
     @Override
     public BlockState underState(RandomSource random, int x, int z) {
         if (random.nextInt(3) == 0) {
-            return Blocks.RED_TERRACOTTA.defaultBlockState();
+            return Blocks.DYED_TERRACOTTA.red().defaultBlockState();
         }
 
         return Blocks.TERRACOTTA.defaultBlockState();

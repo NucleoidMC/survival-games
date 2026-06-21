@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -78,7 +79,7 @@ public final class SpawnerStructure implements StructureGen, GameTrackable {
         world.setBlock(pos, Blocks.SPAWNER.defaultBlockState(), 3);
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof SpawnerBlockEntity) {
-            ((SpawnerBlockEntity)blockEntity).getSpawner().setEntityId(EntityType.ZOMBIE, null, RandomSource.create(), pos);
+            ((SpawnerBlockEntity)blockEntity).getSpawner().setEntityId(EntityTypes.ZOMBIE, null, RandomSource.create(), pos);
         }
     }
 
