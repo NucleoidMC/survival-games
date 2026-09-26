@@ -45,12 +45,12 @@
     }
   ],
   "default_state": {
-    "Name": "minecraft:netherrack",
-    "Properties": {}
+    "id": "minecraft:netherrack",
+    "properties": {}
   },
   "default_fluid": {
-    "Name": "minecraft:lava",
-    "Properties": {
+    "id": "minecraft:lava",
+    "properties": {
       "level": "0"
     }
   }

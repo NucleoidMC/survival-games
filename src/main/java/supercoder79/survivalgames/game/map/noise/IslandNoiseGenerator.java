@@ -104,7 +104,7 @@ public class IslandNoiseGenerator implements NoiseGenerator {
 		double az = z / this.radius;
 		double rad = ax * ax + az * az;
 
-		noise = Mth.clampedLerp(noise, -20, rad / 2.0);
+		noise = Mth.clampedLerp(rad / 2.0, noise, -20);
 
 		return noise;
 	}

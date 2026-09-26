@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.gegy.noise.sampler.NoiseSampler2d;
+import net.minecraft.world.level.biome.BiomeResolver;
 import supercoder79.survivalgames.noise.simplex.OpenSimplexNoise;
 import supercoder79.survivalgames.SurvivalGames;
 import supercoder79.survivalgames.game.map.biome.*;
@@ -51,8 +52,8 @@ public final class FakeBiomeSource extends BiomeSource {
 	}
 
 	@Override
-	public Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.Sampler noise) {
-		return biomeRegistry.getOrThrow(getRealBiome(x << 2, z << 2).getFakingBiome());
+	public BiomeResolver createResolver(Climate.Sampler sampler) {
+		return (quartX, quartY, quartZ) -> biomeRegistry.getOrThrow(getRealBiome(quartX << 2, quartZ << 2).getFakingBiome());
 	}
 
 	public BiomeGen getRealBiome(int x, int z) {

@@ -36,7 +36,7 @@ public final class SurvivalGamesJigsawGenerator {
 
     public SurvivalGamesJigsawGenerator(MinecraftServer server, ChunkGenerator generator, Long2ObjectMap<List<PoolElementStructurePiece>> piecesByChunk) {
         this.registryManager = server.registryAccess();
-        this.structureManager = server.getStructureManager();
+        this.structureManager = server.getStructureTemplateManager();
         this.generator = generator;
         this.piecesByChunk = piecesByChunk;
         this.box = new ChunkBox();

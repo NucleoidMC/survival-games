@@ -18,8 +18,8 @@
             "processor_type": "survivalgames:chance_at",
             "pos": [8, 1, 1],
             "state": {
-              "Name": "minecraft:crafting_table",
-              "Properties": {}
+              "id": "minecraft:crafting_table",
+              "properties": {}
             },
             "chance": 0.8
           },
@@ -27,8 +27,8 @@
             "processor_type": "survivalgames:chance_at",
             "pos": [8, 1, 2],
             "state": {
-              "Name": "minecraft:furnace",
-              "Properties": {
+              "id": "minecraft:furnace",
+              "properties": {
                 "lit": "false",
                 "facing": "north"
               }

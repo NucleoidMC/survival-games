@@ -6,6 +6,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.synth.Noise;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import supercoder79.survivalgames.game.map.loot.LootProvider;
 import supercoder79.survivalgames.game.map.loot.LootProviders;
@@ -39,14 +40,14 @@ public final class MeteorStructure implements StructureGen {
     public void generateNetherrack(ServerLevelAccessor world, BlockPos pos, RandomSource random) {
         int radius = 5 + random.nextInt(3);
         double dRadius = radius;
-        NormalNoise noise = NormalNoise.create(RandomSource.create(random.nextLong()), -3, 0.1);
+        Noise noise = NormalNoise.createParity(-3, 0.1).create(RandomSource.create(random.nextLong()));
 
         for (int x = -radius; x <= radius; x++) {
             for (int z = -radius; z <= radius; z++) {
                 double ax = x / dRadius;
                 double az = z / dRadius;
 
-                double rad = 1.0 + noise.getValue(pos.getX() + x, pos.getY(), pos.getZ() + z);
+                double rad = 1.0 + noise.get(pos.getX() + x, pos.getY(), pos.getZ() + z);
                 rad += random.nextDouble() * 0.1;
 
                 if (ax * ax + az * az <= rad) {
@@ -63,7 +64,7 @@ public final class MeteorStructure implements StructureGen {
     public void generateMeteor(ServerLevelAccessor world, BlockPos pos, RandomSource random) {
         int radius = 2 + random.nextInt(2);
         double dRadius = radius;
-        NormalNoise noise = NormalNoise.create(RandomSource.create(random.nextLong()), -3, 0.1);
+        Noise noise = NormalNoise.createParity(-3, 0.1).create(RandomSource.create(random.nextLong()));
 
         for (int x = -radius; x <= radius; x++) {
             for (int z = -radius; z <= radius; z++) {
@@ -72,7 +73,7 @@ public final class MeteorStructure implements StructureGen {
                     double az = z / dRadius;
                     double ay = y / dRadius;
 
-                    if (ax * ax + az * az + ay * ay <= 1.0 + noise.getValue(pos.getX() + x, pos.getY() + y, pos.getZ() + z)) {
+                    if (ax * ax + az * az + ay * ay <= 1.0 + noise.get(pos.getX() + x, pos.getY() + y, pos.getZ() + z)) {
                         world.setBlock(pos.offset(x, y, z), STATES.pickRandom(random), 3);
                     }
                 }

@@ -11,7 +11,7 @@
         "processors": [
           {
             "processor_type": "minecraft:block_ignore",
-            "blocks": [{"Name": "minecraft:grass_block", "Properties": {
+            "blocks": [{"id": "minecraft:grass_block", "properties": {
               "snowy": "false"
             }}]
           }
@@ -27,7 +27,7 @@
         "processors": [
           {
             "processor_type": "minecraft:block_ignore",
-            "blocks": [{"Name": "minecraft:grass_block", "Properties": {
+            "blocks": [{"id": "minecraft:grass_block", "properties": {
               "snowy": "false"
             }}]
           }
@@ -43,7 +43,7 @@
         "processors": [
           {
             "processor_type": "minecraft:block_ignore",
-            "blocks": [{"Name": "minecraft:grass_block", "Properties": {
+            "blocks": [{"id": "minecraft:grass_block", "properties": {
               "snowy": "false"
             }}]
           }
@@ -59,7 +59,7 @@
         "processors": [
           {
             "processor_type": "minecraft:block_ignore",
-            "blocks": [{"Name": "minecraft:grass_block", "Properties": {
+            "blocks": [{"id": "minecraft:grass_block", "properties": {
               "snowy": "false"
             }}]
           }

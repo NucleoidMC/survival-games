@@ -208,7 +208,7 @@ public final class SurvivalGamesActive {
     }
 
     private boolean tickMobSpawners(BlockPos pos) {
-        if (this.world.hasNeighborSignal(pos)) {
+        if (this.world.shouldTickBlocksAt(pos) && this.world.hasNeighborSignal(pos)) {
             addLogic(new SpawnerLogic(this, pos));
             TargetingConditions pred = TargetingConditions.DEFAULT;
             pred.selector((p, w) -> p instanceof ServerPlayer player && this.space.getPlayers().participants().contains(player) && player.gameMode.isSurvival());
